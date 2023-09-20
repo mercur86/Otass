@@ -1,0 +1,62 @@
+.item-tolbar {
+  --border-color: white;
+  }
+
+  .custom-alert-header  {
+    background-color: #ff0000; /* Aquí puedes establecer el color que desees */
+    color: #ffffff; /* Opcional: cambiar el color del texto del header */
+  }
+  
+  ion-title {
+    font-size: 15px; /* Ajusta el tamaño de letra según tus preferencias */
+  }
+  
+  .fab-cerrar {
+    position: absolute;
+    top: 80%; 
+    left: -175%;
+    background: white;
+    padding: 4px 8px;  
+    border-radius: 4px;
+    background-color: transparent;
+    color: #4c8dff;
+  }
+
+  .fab-limpiar {
+    position: absolute;
+    top: 55%; 
+    left: -125%;
+    background: white;
+    padding: 4px 8px;  
+    border-radius: 4px;
+    background-color: transparent;
+    color: #4c8dff;
+  }
+
+  .fab-guardar {
+    position: absolute;
+    top: 30%; 
+    left: -125%;
+    background: white;
+    padding: 4px 8px;  
+    border-radius: 4px;
+    background-color: transparent;
+    color: #4c8dff;
+  }
+
+  .fab-avance {
+    position: absolute;
+    top: 7%; 
+    left: -125%;
+    background: white;
+    padding: 4px 8px;  
+    border-radius: 4px;
+    background-color: transparent;
+    color: #4c8dff;
+  }
+ 
+ .labelDatos{
+  //font-family: Georgia, Serif;
+  font-size: 17px;
+  font-weight: 500;
+ }

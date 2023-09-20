@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      EPS GRAU SISGECO
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="logo-container">
+    <img src="assets/logo.png" alt="Logo EPS Grau SISGECO">
+  </div>
+  <form (submit)="login()">
+    <ion-item>
+      <ion-label position="floating">Usuario</ion-label>
+      <ion-input type="number" name="username" [(ngModel)]="username"  autocomplete="username" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Contraseña</ion-label>
+      <ion-input type="password" name="password" [(ngModel)]="password"  autocomplete="current-password" required></ion-input>
+    </ion-item>
+    <ion-button type="submit" expand="block">Ingresar</ion-button>
+  </form>
+</ion-content>

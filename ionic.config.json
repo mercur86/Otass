@@ -1,0 +1,8 @@
+{
+  "name": "EPS GRAU",
+  "integrations": {
+    "capacitor": {}
+  },
+ 
+  "type": "angular"
+}
