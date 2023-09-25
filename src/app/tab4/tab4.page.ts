@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Impedimento } from '../entidades/impedimento';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { PhotoService } from '../services/photo.service';
 import { Geolocation } from '@capacitor/geolocation';
 import { Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
+import { Actividades } from '../entidades/Actividades';
 
 
 
@@ -26,7 +26,8 @@ export class Tab4Page implements OnInit {
   observacion: string = '';
   sgrabar?=false;
   idUs?:any;
-
+  listaActividades:Actividades[]=[];
+selectedActividad : any;
  watchId:any; // para geolocalizar
 usuarioId:any;
 uri:string ='https://sisgeco.epsgrau.pe/sisgeco-ws/sisgeco/app/v1';
@@ -57,6 +58,13 @@ public photos: UserPhoto[] = [];
     this.nombreUser=localStorage.getItem('nombreUser');
     this.idUs=localStorage.getItem('idUsuario');
     this.tipoUsuario = localStorage.getItem('perfil');
+    const actividades = localStorage.getItem('actividades');
+    this.provincia= localStorage.getItem('provincia');
+    this.distrito= localStorage.getItem('distrito');
+    if (actividades) {
+    this.listaActividades = JSON.parse(actividades);
+      // Hacer algo con los datos almacenados en el array 'impedimentosArray'
+    }
   }
   
   
@@ -122,19 +130,26 @@ public photos: UserPhoto[] = [];
     );
   }
 
-  async criticarLectura() {
+  async guardarMorososActivos() {
+    console.log('select campturado: '+ this.selectedActividad);
     if(this.nombre){
+      if(this.selectedActividad==''){
       const loading = await this.loadingController.create({
         message: 'Cargando datos...',
         spinner: 'crescent'
       });
       await loading.present();
-      this.http.get<any>('https://sisgeco.epsgrau.pe/SISGECO/servicioWeb/appOtassTest/'+this.suministro+'/'+this.longitud+'/'+this.latitud+'/'+this.idUs+'/'+this.nombreUser+'/'+this.observacion+'.htm')
+
+      const body={
+        archivoBase64Original: this.bas64[0],
+      }
+      // this.http.post<any>('https://sisgeco.epsgrau.pe/SISGECO/servicioWeb/registrarVisitaProyectoOtass/'+this.suministro+'/'+this.longitud+'/'+this.latitud+'/'+this.idUs+'/'+this.nombreUser+'/'+this.selectedActividad+'/'+this.observacion+'.htm',body)
+      this.http.post<any>('https://6nz7pqzj-8080.brs.devtunnels.ms/SistemaComercialEPS/servicioWeb/registrarVisitaProyectoOtass/'+this.suministro+'/'+this.longitud+'/'+this.latitud+'/'+this.idUs+'/'+this.nombreUser+'/'+this.selectedActividad+'/'+this.observacion+'.htm',body)
       .subscribe(
         async (response) => { 
           loading.dismiss();
           console.log(response);
-          this.subirFotos();
+         // this.subirFotos();
           const toast = await this.toastController.create({
             message: 'grabado correctamente',
             duration: 5000,
@@ -156,6 +171,10 @@ public photos: UserPhoto[] = [];
           
         }
       );
+    }else{
+      this.presentAlertPersonalizado('Debes seleccionar una actividad');
+    
+    }
     }else{
       this.presentAlertPersonalizado('Debes Cargar un suministro');
     }
@@ -312,6 +331,9 @@ public photos: UserPhoto[] = [];
   async avanceNotificacion(){ 
     this.router.navigate(['/tab3']);
     
+  }
+  onActividadSelect(event: any) {
+    console.log(event);//realizar una accion al seleccionar un select 
   }
 
 } 

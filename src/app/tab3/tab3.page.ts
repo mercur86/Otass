@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Provincia } from '../entidades/Provincia';
 import { Distrito } from '../entidades/Distrito';
 import { Ciclo } from '../entidades/Ciclo';
-import { Sector } from '../entidades/Sector';
 import { Ruta } from '../entidades/ruta';
 import { HttpHeaders } from '@angular/common/http';
 import { Impedimento } from '../entidades/impedimento';
@@ -31,6 +30,7 @@ dni:any;
 nombreUser:any;
 idUs:any;
 lastIndexToShow = 20;
+tipoUsuario:any;
   constructor(private platform: Platform,private http: HttpClient,public photoService: PhotoService,public alertController:AlertController,private loadingController: LoadingController, private toastController: ToastController,private router: Router) { 
    
   }
@@ -44,7 +44,7 @@ lastIndexToShow = 20;
   ionViewDidEnter() {
     this.nombreUser=localStorage.getItem('nombreUser');
     this.idUs=localStorage.getItem('idUsuario');
-    
+    this.tipoUsuario = localStorage.getItem('perfil');
     this.dni = localStorage.getItem('idUsuario');
     console.log(this.dni);
     this.http.get<any>('https://sisgeco.epsgrau.pe/SISGECO/servicioWeb/buscarPadronVisitaAvancePorIdPersonal/'+this.dni+'.htm')

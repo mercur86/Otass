@@ -1,8 +1,8 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-item lines="none">  
-    <ion-button (click)="regresar()" fill="clear"><ion-icon slot="icon-only" name="arrow-back-outline" ></ion-icon></ion-button>
-    <ion-title > <ion-note color="primary">{{nombreUser}}-{{idUs}}</ion-note> </ion-title> 
+    <ion-button  (click)="regresar()" fill="clear"><ion-icon slot="icon-only" name="arrow-back-outline" ></ion-icon></ion-button>
+    <ion-title ><ion-note color="primary"> {{nombreUser}}-{{idUs}}</ion-note> </ion-title>
   </ion-item>  
   </ion-toolbar>
 </ion-header>
@@ -11,27 +11,21 @@
 <ion-content [fullscreen]="true" color="light">
   <br>
 <ion-searchbar [debounce]="1000"  (ionInput)="buscadorListaAvances($event)"  ></ion-searchbar>
-  <ion-list  [inset]="true" class="header-list">
-    <ion-item lines="none">
-      <ion-label>Fecha</ion-label>
-      <ion-label>Suministro</ion-label>      
-    </ion-item>
 
-  
-  </ion-list>
-
-  <ion-list  [inset]="true">
-    <ion-item-sliding *ngFor="let listaAvance of results ; let index">
-    <ion-item  >
-      <ion-label style="font-size: 12px;">{{ listaAvance.fecha }}</ion-label>
-      <ion-label style="font-size: 12px;">{{ listaAvance.numInscripcion }}</ion-label>
+  <ion-list  [inset]="true" >
+    <ion-item-sliding  *ngFor="let listaAvance of results ; let index">
+    <ion-item lines="none" >
+      <ion-label>
+        <h1>Suministro: {{ listaAvance.numInscripcion }}</h1>
+        <p>Fecha:{{ listaAvance.fecha }}<p>
+        <p>Nombre:{{ listaAvance.nombreCompleto }}<p></p> 
+      </ion-label>
     </ion-item>
     <ion-item-options>
       <ion-item-option color="danger">Delete</ion-item-option>
     </ion-item-options>
     </ion-item-sliding>
   </ion-list>
-
   <ion-infinite-scroll (ionInfinite)="loadMoreData($event)">
     <ion-infinite-scroll-content loadingText="Cargando más elementos..."></ion-infinite-scroll-content>
   </ion-infinite-scroll>

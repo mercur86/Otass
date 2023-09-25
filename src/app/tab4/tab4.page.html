@@ -1,16 +1,15 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title slot="start"> <ion-note color="primary">{{nombreUser}}-{{idUs}}</ion-note> </ion-title>
+    <h5 color="dark" style="margin-left: 5%;"> {{tipoUsuario}} - {{provincia}} - {{distrito}} </h5>
+
+    <ion-note color="primary" style="margin-left: 5%; "> {{nombreUser}} - {{idUs}}</ion-note> 
   </ion-toolbar>
+  
 </ion-header>
 
-<ion-content [fullscreen]="true" color="light">
-
- <br>
+<ion-content [fullscreen]="true" color="light" mode="ios">
   <ion-item-group>
-    <ion-item-divider>
-      <ion-label style="font-weight: bold; font-size: 20px; " > {{tipoUsuario}}</ion-label>
-    </ion-item-divider>
+ 
   <ion-item>
     <ion-searchbar type="number" [debounce]="1000" (ionInput)="buscar($event)"
       placeholder="Digite suministro"></ion-searchbar>
@@ -34,6 +33,14 @@
     <ion-item>
       <ion-label class="labelDatos" >Nombre</ion-label>
       <ion-input type="text" [readonly]="true" [(ngModel)]="nombre"></ion-input>
+    </ion-item>
+    <ion-item>
+      
+      <ion-select label="Actividades"  interface="action-sheet"
+      [(ngModel)]="selectedActividad"  (ionChange)="onActividadSelect($event)"  >
+        <!-- <ion-select-option value="">Ninguno</ion-select-option> -->
+        <ion-select-option  *ngFor="let actividad of listaActividades" [value]="actividad.idActividad">{{actividad.descripcion}}</ion-select-option>
+      </ion-select>
     </ion-item>
     <ion-item>
       <ion-label class="labelDatos" >Observación</ion-label>
@@ -99,7 +106,7 @@
       <div>
         <span class="fab-guardar">Guardar</span>
       <ion-fab-button size="small">
-        <ion-icon name="save-outline" (click)="criticarLectura()"></ion-icon>
+        <ion-icon name="save-outline" (click)="guardarMorososActivos()"></ion-icon>
       </ion-fab-button>
     </div>
     <div>
