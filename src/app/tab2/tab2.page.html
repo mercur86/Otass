@@ -1,11 +1,74 @@
+
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-item class="item-tolbar">  
-    <ion-button (click)="regresarTologin()" fill="clear"><ion-icon slot="icon-only" name="arrow-back-outline" ></ion-icon></ion-button>
-    <ion-title > <ion-note color="primary">{{nombreUser}}-{{idUs}}</ion-note> </ion-title> 
-  </ion-item>  
+  <ion-toolbar style="text-align: center;">
+   
+      <!-- <ion-button (click)="regresarTologin()" fill="clear"><ion-icon slot="icon-only"
+          name="arrow-back-outline"></ion-icon></ion-button> -->
+      <ion-title> <ion-note color="primary">{{nombreUser}}-{{idUs}}</ion-note> </ion-title>
+    
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
- 
+  
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+       
+  <ion-item>
+    SUMINISTRO: {{suminsitro}}
+   </ion-item>
+    <ion-item class="fixed-header" >
+    <ion-grid  [fixed]="true" >
+      <ion-row>
+        <ion-col size="6">
+          <ion-item lines="none" class="fixed-header-interno" >
+            <ion-label>
+              <h6>FECHA</h6>
+              <h6>RECIBO</h6>
+              <h6>ESTADO</h6>
+              <h6>OPERACIÓN</h6>
+            </ion-label>
+            </ion-item>
+        </ion-col>
+        <ion-col  size="2"  class="columnascentrar">
+          <p>CARGO</p>
+        </ion-col>
+        <ion-col size="2" class="columnascentrar">
+          <p>ABONO</p>
+        </ion-col>
+        <ion-col size="2"  class="columnascentrar">
+          <p>SALDO</p>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    </ion-item>
+
+    <ion-item *ngFor="let lista of results ; let index" >
+      <ion-grid  [fixed]="true" >
+        <ion-row>
+          <ion-col size="6">
+            <ion-item lines="none" >
+              <ion-label>
+                <h6>{{lista.fecha}}</h6>
+                <h6>{{lista.id_anexo}}</h6>
+                <h6>{{lista.estado_anexo}}</h6>
+                <h6 class="saltoLine">{{lista.concepto_cuenta}}</h6>
+              </ion-label>
+              </ion-item>
+          </ion-col>
+          <ion-col  size="2"  class="columnascentrar">
+            <p class="pFilas">{{ lista.cargo }}</p>
+          </ion-col>
+          <ion-col size="2" class="columnascentrar">
+            <p class="pFilas">{{ lista.abono }}</p>
+          </ion-col>
+          <ion-col size="2"  class="columnascentrar">
+            <p class="pFilas">{{ lista.saldo }}</p>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      </ion-item>
+      <ion-infinite-scroll (ionInfinite)="loadMoreData($event)" >
+        <ion-infinite-scroll-content loadingText="Please wait..." loadingSpinner="bubbles"></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
 </ion-content>

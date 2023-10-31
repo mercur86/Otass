@@ -16,3 +16,17 @@
   overflow-x: auto;
   white-space: nowrap;
 }
+.saltoLine {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.anuncio {
+  width: 400px;
+  height: 100px;
+  background: lightblue;
+  display:block
+}
+
+.boton {
+  float: right;
+}

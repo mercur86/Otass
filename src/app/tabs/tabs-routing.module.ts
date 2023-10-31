@@ -7,17 +7,17 @@ const routes: Routes = [
     component: TabsPage,
     children: [
       {
+        path: 'tab4',
+        loadChildren: () => import('../tab4/tab4.module').then(m => m.Tab4PageModule), // 
+      },{
+        path: 'tab3',
+        loadChildren: () => import('../tab3/tab3.module').then(m => m.Tab3PageModule) //  
+      },{
         path: 'tab2',
-        loadChildren: () => import('../tab2/tab2.module').then(m => m.Tab2PageModule), // libre
+        loadChildren: () => import('../tab2/tab2.module').then(m => m.Tab2PageModule) //
       },{
         path: 'tab5',
-        loadChildren: () => import('../tab5/tab5.module').then(m => m.Tab5PageModule) // primer tab vista  lecturador 
-      },{
-        path: 'tab6',
-        loadChildren: () => import('../tab6/tab6.module').then(m => m.Tab6PageModule) // segundo tab vista  lecturador 
-      },{
-        path: 'tab7',
-        loadChildren: () => import('../tab7/tab7.module').then(m => m.Tab7PageModule) // tercer tab vista  lecturador 
+        loadChildren: () => import('../tab5/tab5.module').then(m => m.Tab5PageModule) //
       },
       
       {

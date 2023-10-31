@@ -1,56 +1,91 @@
 <ion-header>
-  <ion-toolbar>
-    <h5 color="dark" style="margin-left: 5%;"> {{tipoUsuario}} - {{provincia}} - {{distrito}} </h5>
-
-    <ion-note color="primary" style="margin-left: 5%; "> {{nombreUser}} - {{idUs}}</ion-note> 
+  <ion-toolbar style="text-align: center;">
+    <h5 color="dark"> {{tipoUsuario}} - {{provinciaUser}} - {{distritoUser}} </h5>
+    <ion-note color="primary"> {{nombreUser}} - {{idUs}}</ion-note>
   </ion-toolbar>
-  
 </ion-header>
-
-<ion-content [fullscreen]="true" color="light" mode="ios">
+<!-- contenedor de morosos activo he inactivos -->
+<ion-content [fullscreen]="true" color="light">
   <ion-item-group>
- 
-  <ion-item>
-    <ion-searchbar type="number" [debounce]="1000" (ionInput)="buscar($event)"
-      placeholder="Digite suministro"></ion-searchbar>
-  </ion-item>
-  <ion-item>
-    <ion-label class="labelDatos">Provincia</ion-label>
-    <ion-textarea [readonly]="true"  [(ngModel)]="provincia"></ion-textarea>
-  </ion-item>
-  <ion-item>
-    <ion-label class="labelDatos">Distrito</ion-label>
-    <ion-textarea [readonly]="true"  [(ngModel)]="distrito"></ion-textarea>
-  </ion-item>
-  <ion-item>
-    <ion-label class="labelDatos">Catastro</ion-label>
-    <ion-textarea [readonly]="true"  [(ngModel)]="codCatastral"></ion-textarea>
-  </ion-item>
-  <ion-item>
-    <ion-label class="labelDatos">Dirección</ion-label>
-    <ion-textarea [readonly]="true"  [(ngModel)]="direccion"></ion-textarea>
-  </ion-item>
+
     <ion-item>
-      <ion-label class="labelDatos" >Nombre</ion-label>
-      <ion-input type="text" [readonly]="true" [(ngModel)]="nombre"></ion-input>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="10"><ion-searchbar style="margin-top: 2%;" type="number" [debounce]="1000"
+              (ionInput)="buscar($event)" placeholder="Digite suministro"
+              [(ngModel)]="suministro"></ion-searchbar></ion-col>
+          <ion-col>
+            <ion-fab style="margin-top: 10%;">
+              <ion-fab-button size="small" (click)="scan()">
+                <ion-icon name="qr-code"></ion-icon>
+              </ion-fab-button>
+            </ion-fab>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+
     </ion-item>
     <ion-item>
-      
-      <ion-select label="Actividades"  interface="action-sheet"
-      [(ngModel)]="selectedActividad"  (ionChange)="onActividadSelect($event)"  >
-        <!-- <ion-select-option value="">Ninguno</ion-select-option> -->
-        <ion-select-option  *ngFor="let actividad of listaActividades" [value]="actividad.idActividad">{{actividad.descripcion}}</ion-select-option>
+      <ion-label class="labelDatos">Provincia</ion-label>
+      <ion-textarea [readonly]="true" [(ngModel)]="provincia"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-label class="labelDatos">Distrito</ion-label>
+      <ion-textarea [readonly]="true" [(ngModel)]="distrito"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-label class="labelDatos">Cod. Cat.</ion-label>
+      <ion-textarea [readonly]="true" [(ngModel)]="codCatastral"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-label class="labelDatos">Dirección</ion-label>
+      <ion-textarea [readonly]="true" [(ngModel)]="direccion"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-label class="labelDatos">Nombre</ion-label>
+      <ion-textarea type="text" [readonly]="true" [(ngModel)]="nombre"></ion-textarea>
+    </ion-item>
+
+
+
+    <!-- aca para lectura de altos consumidores  -->
+    <ion-item *ngIf="rolConsumo">
+      <ion-label class="labelDatos">Categoría</ion-label>
+      <ion-textarea type="number" [(ngModel)]="categoria" [readonly]="true"></ion-textarea>
+    </ion-item>
+    <ion-item *ngIf="rolConsumo">
+      <ion-label class="labelDatos">Fecha ultima lectura</ion-label>
+      <ion-textarea type="number" [(ngModel)]="fechaUltimaLectura" [readonly]="true"></ion-textarea>
+    </ion-item>
+    <ion-item *ngIf="rolConsumo">
+      <ion-label class="labelDatos">Ultima Lectura</ion-label>
+      <ion-textarea type="number" [(ngModel)]="ultimaLectura" [readonly]="true"></ion-textarea>
+    </ion-item>
+    <ion-item *ngIf="rolConsumo">
+      <ion-label class="labelDatos">Lectura</ion-label>
+      <ion-input type="number" [(ngModel)]="lectura"></ion-input>
+    </ion-item>
+
+    <ion-item *ngIf="ocultarSelectActividad">
+      <ion-label class="labelDatos">Actividad</ion-label>
+      <ion-select interface="action-sheet" [(ngModel)]="selectedActividad" (ionChange)="onActividadSelect($event)">
+        <ion-select-option [value]="selectedActividad">{{descActividad}}</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item>
-      <ion-label class="labelDatos" >Observación</ion-label>
-      <ion-textarea [autoGrow]="true" placeholder="Digite observación"
-        [(ngModel)]="observacion" ></ion-textarea>
+
+    <ion-item *ngIf="!ocultarSelectActividad">
+      <ion-label class="labelDatos">Actividades</ion-label>
+      <ion-select interface="action-sheet" [(ngModel)]="selectedActividad" (ionChange)="onActividadSelect($event)">
+        <ion-select-option *ngFor="let actividad of listaActividades"
+          [value]="actividad.id">{{actividad.descripcion}}</ion-select-option>
+      </ion-select>
     </ion-item>
-    <!--<ion-item>
-    <ion-label>Lectura</ion-label>
-    <ion-input type="number" [(ngModel)]="lectura" [disabled]="isLecturaDisabled"></ion-input>
-  </ion-item>-->
+
+    <ion-item>
+      <ion-label class="labelDatos">Observación</ion-label>
+      <ion-textarea [autoGrow]="true" placeholder="Digite observación" [(ngModel)]="observacion"></ion-textarea>
+    </ion-item>
   </ion-item-group>
   <ion-grid>
     <ion-row>
@@ -70,53 +105,42 @@
       <ion-img [src]="photo.webviewPath"></ion-img>
     </ion-col>
   </ion-row>
-  <!--<ion-col size="6" *ngFor="let photo of photoService.photos; index as position">
-    <ion-img [src]="photo.webviewPath"></ion-img>
-  </ion-col>-->
 
-  <!--<ion-list>
-    <ion-item>Latitud: {{latitud}}</ion-item>
-    <ion-item>Longitud: {{longitud}}</ion-item>
-  </ion-list>-->
 
-  <!--<div class="ion-text-center">
-  <ion-col><ion-button (click)="criticarLectura()" > Grabar</ion-button></ion-col>
-      <ion-col><ion-button (click)="limpiar()">  Limpiar </ion-button></ion-col>
-      <ion-col><ion-button (click)="verfotos()">  verFotos </ion-button></ion-col>
-</div>-->
+  <!-- botones flotantes  -->
 
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button>
       <ion-icon name="layers-outline"></ion-icon>
     </ion-fab-button>
     <ion-fab-list side="top">
-      
+
       <div>
         <span class="fab-cerrar">Cerar sesión</span>
-        <ion-fab-button size="small">
+        <ion-fab-button size="large">
           <ion-icon name="person-remove-outline" (click)="regresarToLogin()"></ion-icon>
         </ion-fab-button>
       </div>
-      <div>
+      <div class="separcion_btn_float">
         <span class="fab-limpiar">Limpiar</span>
-        <ion-fab-button size="small">
+        <ion-fab-button size="large">
           <ion-icon name="trash-outline" (click)="limpiar()"></ion-icon>
         </ion-fab-button>
       </div>
-      <div>
+      <div class="separcion_btn_float">
         <span class="fab-guardar">Guardar</span>
-      <ion-fab-button size="small">
-        <ion-icon name="save-outline" (click)="guardarMorososActivos()"></ion-icon>
-      </ion-fab-button>
-    </div>
-    <div>
+        <ion-fab-button size="large">
+          <ion-icon name="save-outline" (click)="guardarActividad()"></ion-icon>
+        </ion-fab-button>
+      </div>
+      <!-- <div>
       <span class="fab-avance">Avance</span>
     <ion-fab-button size="small" (click)="avanceNotificacion()">
       <ion-icon name="document-text-outline"></ion-icon>
     </ion-fab-button>
-  </div>
-    
+  </div> -->
+
     </ion-fab-list>
   </ion-fab>
- 
+  <!-- <div style="height: 300px;" id="mapId"></div> -->
 </ion-content>

@@ -72,9 +72,7 @@ export class PhotoService {
       webviewPath: photo.webPath
     };
   }
-  
- 
-  
+
   
   private async readAsBase64(photo: Photo): Promise<string> {
     // "hybrid" will detect Cordova or Capacitor

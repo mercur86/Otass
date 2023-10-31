@@ -13,12 +13,13 @@
   <form (submit)="login()">
     <ion-item>
       <ion-label position="floating">Usuario</ion-label>
-      <ion-input type="number" name="username" [(ngModel)]="username"  autocomplete="username" required></ion-input>
+      <ion-input type="text" name="username" [(ngModel)]="username" autocomplete="username" required inputmode="numeric"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label position="floating">Contraseña</ion-label>
-      <ion-input type="password" name="password" [(ngModel)]="password"  autocomplete="current-password" required></ion-input>
+      <ion-input type="{{ showPassword ? 'text' : 'password' }}" name="password" [(ngModel)]="password" autocomplete="current-password" required></ion-input>
+      <ion-icon  style="margin-top: 7%;" name="{{ showPassword ? 'eye-off' : 'eye' }}" slot="end" (click)="togglePasswordVisibility()"></ion-icon>
     </ion-item>
-    <ion-button type="submit" expand="block">Ingresar</ion-button>
+    <ion-button type="submit" expand="block" shape="round">Ingresar</ion-button>
   </form>
 </ion-content>

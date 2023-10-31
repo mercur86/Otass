@@ -14,46 +14,49 @@
   .fab-cerrar {
     position: absolute;
     top: 80%; 
-    left: -175%;
+    left: -185%;
     background: white;
     padding: 4px 8px;  
     border-radius: 4px;
     background-color: transparent;
-    color: #4c8dff;
-  }
+    color: #068FFF
+    ;
+  } 
 
   .fab-limpiar {
     position: absolute;
-    top: 55%; 
+    top: 43%; 
     left: -125%;
     background: white;
     padding: 4px 8px;  
     border-radius: 4px;
     background-color: transparent;
-    color: #4c8dff;
+    color: #068FFF
+    ;
   }
 
   .fab-guardar {
     position: absolute;
-    top: 30%; 
+    top: 10%; 
     left: -125%;
     background: white;
     padding: 4px 8px;  
     border-radius: 4px;
     background-color: transparent;
-    color: #4c8dff;
+    color: #068FFF
+    ;
   }
 
-  .fab-avance {
-    position: absolute;
-    top: 7%; 
-    left: -125%;
-    background: white;
-    padding: 4px 8px;  
-    border-radius: 4px;
-    background-color: transparent;
-    color: #4c8dff;
-  }
+  // .fab-avance {
+  //   position: absolute;
+  //   top: 7%; 
+  //   left: -125%;
+  //   background: white;
+  //   padding: 4px 8px;  
+  //   border-radius: 4px;
+  //   background-color: transparent;
+  //   color: #4c8dff;
+  // }
  
  .labelDatos{
   //font-family: Georgia, Serif;
@@ -64,3 +67,10 @@
  .saltoLinea{
   white-space: pre-wrap;
 }
+
+.separcion_btn_float{
+  margin-bottom: 30%;
+ // padding-bottom: 30%;
+
+}
+
