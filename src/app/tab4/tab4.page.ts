@@ -234,15 +234,22 @@ export class Tab4Page implements OnInit {
 
 
   async guardarActividad() {
+
+
     if (this.isPhotoGallery) {
+      console.log('entro a fotos de galeria');
+      console.log(this.filesFotosGalery);
       this.guardar(this.filesFotosGalery);
     } else {
+      console.log('entro a fotos de camara');
       this.guardar(this.filesFotosCamara);
     }
 
   }
 
   async guardar(fotos: any) {
+    console.log('tamaño de array fotos al guardar');
+    console.log(fotos.length);
     var numNot = -1;
     var numComp = -1;
     if (this.numNotificacion) {
@@ -256,94 +263,96 @@ export class Tab4Page implements OnInit {
 
     if (this.nombre) {
       if (this.selectedActividad) {
-        if(this.selectedEstadoVisita){
-        if (true) { // this.base64[0] aca permito que sea opcional la foto
-          this.utils.loader(); // carga el loader de espera 
+        if (this.selectedEstadoVisita) {
+          if (true) { // this.base64[0] aca permito que sea opcional la foto
+            this.utils.loader(); // carga el loader de espera 
 
-          const formData = new FormData();
-          formData.append('numInscripcion', this.suministro);
-          formData.append('longitud', this.longitud);
-          formData.append('latitud', this.latitud);
-          formData.append('idPersona', this.idUs);
-          formData.append('nombreCompleto', this.nombreUser);
-          formData.append('idProyectoOtass', this.idProyectoOtass);
-          formData.append('idProyectoOtassZonal', this.idProyectoOtassZonal);
-          formData.append('idActividad', this.selectedActividad);
-          formData.append('idEstadoVisitaT', this.selectedEstadoVisita);
-          formData.append('lectura', this.lectura.toString());
-          formData.append('numNotificacion', numNot.toString());
-          formData.append('numCompromisoPago', numComp.toString());
-          formData.append('flagUsoQr', this.flagQR.toString());
-          formData.append('observacion', this.observacion);
+            const formData = new FormData();
+            formData.append('numInscripcion', this.suministro);
+            formData.append('longitud', this.longitud);
+            formData.append('latitud', this.latitud);
+            formData.append('idPersona', this.idUs);
+            formData.append('nombreCompleto', this.nombreUser);
+            formData.append('idProyectoOtass', this.idProyectoOtass);
+            formData.append('idProyectoOtassZonal', this.idProyectoOtassZonal);
+            formData.append('idActividad', this.selectedActividad);
+            formData.append('idEstadoVisitaT', this.selectedEstadoVisita);
+            formData.append('lectura', this.lectura.toString());
+            formData.append('numNotificacion', numNot.toString());
+            formData.append('numCompromisoPago', numComp.toString());
+            formData.append('flagUsoQr', this.flagQR.toString());
+            formData.append('observacion', this.observacion);
 
-          if (fotos.length > 0 && fotos.length < 2) {
-            formData.append('foto1', fotos[0]);
-            const file = new File([''], '', { type: 'text/plain' });
-            formData.append('foto2', file);
-            formData.append('foto3', file);
-          } else if (fotos.length > 1 && fotos.length < 3) {
-            formData.append('foto1', fotos[0]);
-            formData.append('foto2', fotos[1]);
-            const file = new File([''], '', { type: 'text/plain' });
-            formData.append('foto3', file);
-          } else if (fotos.length > 2 && fotos.length < 4) {
-            formData.append('foto1', fotos[0]);
-            formData.append('foto2', fotos[1]);
-            formData.append('foto3', fotos[2]);
-          }else if (fotos.length ==0){
-            const file = new File([''], '', { type: 'text/plain' });
-            formData.append('foto1', file);
-            formData.append('foto2', file);
-            formData.append('foto3', file);
+            if (fotos.length > 0 && fotos.length < 2) {
+              formData.append('foto1', fotos[0]);
+              const file = new File([''], '', { type: 'text/plain' });
+              formData.append('foto2', file);
+              formData.append('foto3', file);
+            } else if (fotos.length > 1 && fotos.length < 3) {
+              formData.append('foto1', fotos[0]);
+              formData.append('foto2', fotos[1]);
+              const file = new File([''], '', { type: 'text/plain' });
+              formData.append('foto3', file);
+            } else if (fotos.length > 2 && fotos.length < 4) {
+              formData.append('foto1', fotos[0]);
+              formData.append('foto2', fotos[1]);
+              formData.append('foto3', fotos[2]);
+            } else if (fotos.length == 0) {
+              const file = new File([''], '', { type: 'text/plain' });
+              formData.append('foto1', file);
+              formData.append('foto2', file);
+              formData.append('foto3', file);
 
-          }else if (fotos.length > 3){
-            formData.append('foto1', fotos[0]);
-            formData.append('foto2', fotos[1]);
-            formData.append('foto3', fotos[2]);
-          }
-
-
-          this.http.post<any>(environment.ROOTAPI + 'registrarVisitaI3.htm', formData).subscribe(
-            {
-              next: response => {
-                if (response.id == '1') {
-                  this.utils.closeLoader();
-                  //this.utils.mostrarToast(response.mensaje, 1000, 'success');
-                  if (this.mantenerDatos) {
-                    //limpiar solo la actividad
-                    this.selectedActividad = '';
-                    this.selectedEstadoVisita = '';
-                  } else {
-                    console.log('entro a else');
-                    this.limpiar(); // limpiar todo
-                  }
-
-                  this.utils.presentAlertPersonalizado('', 'Notificado Correctamente');
-                } else if (response.id == '2') {
-                  console.error(response.mensaje);
-                  this.utils.closeLoader();
-                  this.utils.mostrarToast(response.mensaje, 5000, 'danger');
-                } else if (response.id == '3') {
-                  console.error(response.mensaje);
-                  this.utils.closeLoader();
-                  this.utils.mostrarToast('ERROR AL REGISTRAR', 5000, 'danger');
-                }
-              },
-              error: (error) => {
-                this.utils.closeLoader();
-                console.error(error);
-                //this.utils.mostrarToast(JSON.stringify(error), 5000, 'danger');
-              }
+            } else if (fotos.length > 3) {
+              formData.append('foto1', fotos[0]);
+              formData.append('foto2', fotos[1]);
+              formData.append('foto3', fotos[2]);
             }
-          );
-         
 
+
+            this.http.post<any>(environment.ROOTAPI + 'registrarVisitaI3.htm', formData).subscribe(
+              {
+                next: response => {
+                  if (response.id == '1') {
+                    this.utils.closeLoader();
+                    //this.utils.mostrarToast(response.mensaje, 1000, 'success');
+                    if (this.mantenerDatos) {
+                      //limpiar solo la actividad
+                      this.selectedActividad = '';
+                      this.selectedEstadoVisita = '';
+                      this.filesFotosGalery = [];
+                      this.isPhotoGallery = false;
+                    } else {
+                      console.log('entro a else');
+                      this.limpiar(); // limpiar todo
+                    }
+
+                    this.utils.presentAlertPersonalizado('', 'Notificado Correctamente');
+                  } else if (response.id == '2') {
+                    console.error(response.mensaje);
+                    this.utils.closeLoader();
+                    this.utils.mostrarToast(response.mensaje, 5000, 'danger');
+                  } else if (response.id == '3') {
+                    console.error(response.mensaje);
+                    this.utils.closeLoader();
+                    this.utils.mostrarToast('ERROR AL REGISTRAR', 5000, 'danger');
+                  }
+                },
+                error: (error) => {
+                  this.utils.closeLoader();
+                  console.error(error);
+                  //this.utils.mostrarToast(JSON.stringify(error), 5000, 'danger');
+                }
+              }
+            );
+
+
+          } else {
+            this.utils.presentAlertPersonalizado('', 'Debe tomar una foto');
+          }
         } else {
-          this.utils.presentAlertPersonalizado('', 'Debe tomar una foto');
+          this.utils.presentAlertPersonalizadoDanger('', 'Debes seleccionar una estado de visita');
         }
-      }else{
-        this.utils.presentAlertPersonalizadoDanger('', 'Debes seleccionar una estado de visita');
-      }
       } else {
         this.utils.presentAlertPersonalizadoDanger('', 'Debes seleccionar una actividad');
 
@@ -366,6 +375,7 @@ export class Tab4Page implements OnInit {
       this.distrito = '',
       this.codCatastral = '',
       this.selectedActividad = '';
+    this.selectedEstadoVisita = '';
     this.categoria = '';
     this.lectura = 0;
     this.ultimaLectura = '';
@@ -374,6 +384,9 @@ export class Tab4Page implements OnInit {
     this.idActivida = '';
     this.descActividad = '';
     this.images = [];
+    this.filesFotosGalery = [];
+    this.isPhotoGallery = false;
+
   }
 
 
@@ -594,16 +607,28 @@ export class Tab4Page implements OnInit {
       // Completar el base64
       const base64 = 'data:image/jpeg;base64,' + file.data;
       // Agregar al array
-    this.images.push(base64); // este array se muestra en el frond
-    if(file.blob){
-      const files = new File([file.blob], file.name, { type: file.mimeType });
-      this.filesFotosGalery.push(files); // este array se envia al multpart formdata
-    }
-  
-      
+      this.images.push(base64); // este array se muestra en el frond
+      // Convertir los base64 a Files 
+      if (this.images[0]) {
+        const file = this.convertBase64ToFile(this.images[0]);
+        this.filesFotosGalery.push(file);
+      }
+      if (this.images[1]) {
+        const file1 = this.convertBase64ToFile(this.images[1]);
+        this.filesFotosGalery.push(file1);
+      }
+      if (this.images[2]) {
+        const file2 = this.convertBase64ToFile(this.images[2]);
+        this.filesFotosGalery.push(file2);
+      }
+
+      console.log(this.filesFotosGalery);
+
+
+
     });
 
-    
+
     if (this.images.length > 0) {
       this.isPhotoGallery = true;
     } else {
@@ -611,6 +636,28 @@ export class Tab4Page implements OnInit {
     }
   }
 
+  convertBase64ToFile = (base64: string) => {
 
+    // Extracta sólo la parte base64 sin cabecera data:image/jpeg;base64,
+    const withoutHeader = base64.split(',')[1];
+
+    // Convierte a bytes
+    const byteString = atob(withoutHeader);
+
+    // Crear array de bytes
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+
+    // Crear File
+    const blob = new Blob([int8Array], { type: 'image/jpeg' });
+    const file = new File([blob], new Date().getTime() + 'image.jpg', { type: 'image/jpeg' });
+
+    return file;
+
+  }
 }
 
