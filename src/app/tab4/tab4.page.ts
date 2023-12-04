@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment.prod';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { EstadosVisita } from '../objetos/EstadosVisita';
 import { ApiService } from '../services/api.service';
-
+import * as EXIF from 'exif-js';
 @Component({
   selector: 'app-tab4',
   templateUrl: './tab4.page.html',
@@ -29,14 +29,17 @@ export class Tab4Page implements OnInit {
     googleBarcodeScannerModuleInstallProgress: new UntypedFormControl(0),
   });
   //
+  
+  images: any[] = [];
+  isPhotoGallery = false;
   periodoInput?: string;
   anio?: string;
   mes?: string;
   suministro?: any;
   nombre?: any = '';
   direccion?: any;
-  latitud?: any;
-  longitud?: any;
+  latitud?: any=0;
+  longitud?: any=0;
   observacion: string = '';
   sgrabar?= false;
   idUs?: any;
@@ -204,6 +207,8 @@ export class Tab4Page implements OnInit {
   };
 
   async obtenerCoordenadasGPS() {
+   
+  
     try {
       const options = {
         enableHighAccuracy: this.acuary,
@@ -234,15 +239,22 @@ export class Tab4Page implements OnInit {
 
 
   async guardarActividad() {
+ 
+    
     if (this.isPhotoGallery) {
+      console.log('entro a fotos de galeria');
+      console.log(this.filesFotosGalery);
       this.guardar(this.filesFotosGalery);
     } else {
+      console.log('entro a fotos de camara');
       this.guardar(this.filesFotosCamara);
     }
 
   }
 
   async guardar(fotos: any) {
+    console.log('tamaño de array fotos al guardar');
+    console.log(fotos.length);
     var numNot = -1;
     var numComp = -1;
     if (this.numNotificacion) {
@@ -313,6 +325,8 @@ export class Tab4Page implements OnInit {
                     //limpiar solo la actividad
                     this.selectedActividad = '';
                     this.selectedEstadoVisita = '';
+                    this.filesFotosGalery=[];
+                    this.isPhotoGallery=false;
                   } else {
                     console.log('entro a else');
                     this.limpiar(); // limpiar todo
@@ -366,14 +380,18 @@ export class Tab4Page implements OnInit {
       this.distrito = '',
       this.codCatastral = '',
       this.selectedActividad = '';
+      this.selectedEstadoVisita = '';
     this.categoria = '';
     this.lectura = 0;
     this.ultimaLectura = '';
     this.fechaUltimaLectura = '';
     this.sgrabar = false;
+    this.isPhotoGallery=false;
     this.idActivida = '';
     this.descActividad = '';
     this.images = [];
+    this.filesFotosGalery=[];
+
   }
 
 
@@ -580,8 +598,6 @@ export class Tab4Page implements OnInit {
   }
 
 
-  images: any[] = [];
-  isPhotoGallery = false;
 
   async pickImages() {
 
@@ -590,27 +606,63 @@ export class Tab4Page implements OnInit {
       readData: true
     });
     // Recorrer cada archivo
+
     result.files.forEach(file => {
       // Completar el base64
       const base64 = 'data:image/jpeg;base64,' + file.data;
       // Agregar al array
+     // console.log(base64);
     this.images.push(base64); // este array se muestra en el frond
-    if(file.blob){
-      const files = new File([file.blob], file.name, { type: file.mimeType });
-      this.filesFotosGalery.push(files); // este array se envia al multpart formdata
-    }
-  
+    //const f = this.convertBase64ToFile(base64);
+   // this.filesFotosGalery.push(f);
+
       
     });
-
+ 
+     // Convertir los base64 a Files 
+     if(this.images[0]){ const file = this.convertBase64ToFile(this.images[0]);
+      this.filesFotosGalery.push(file);
+    }
+     if(this.images[1]){  const file1 = this.convertBase64ToFile(this.images[1]);
+      this.filesFotosGalery.push(file1);
+    }
+     if(this.images[2]){    const file2 = this.convertBase64ToFile(this.images[2]);
+      this.filesFotosGalery.push(file2);
+    }
+     
+ console.log(this.filesFotosGalery);
     
     if (this.images.length > 0) {
+      console.log('es foto de gaaleria? true > 0');
       this.isPhotoGallery = true;
     } else {
       this.isPhotoGallery = false;
     }
   }
 
+  convertBase64ToFile = (base64: string) => {
+
+    // Extracta sólo la parte base64 sin cabecera data:image/jpeg;base64,
+    const withoutHeader = base64.split(',')[1];  
+  
+    // Convierte a bytes
+    const byteString = atob(withoutHeader);
+  
+    // Crear array de bytes
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+  
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+  
+    // Crear File
+    const blob = new Blob([int8Array], {type: 'image/jpeg'});
+    const file = new File([blob], new Date().getTime()+ 'image.jpg', {type: 'image/jpeg'});
+  
+    return file;
+  
+  }
 
 }
 
