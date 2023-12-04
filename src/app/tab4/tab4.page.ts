@@ -35,8 +35,8 @@ export class Tab4Page implements OnInit {
   suministro?: any;
   nombre?: any = '';
   direccion?: any;
-  latitud?: any;
-  longitud?: any;
+  latitud?: any=0;
+  longitud?: any=0;
   observacion: string = '';
   sgrabar?= false;
   idUs?: any;
