@@ -1,5 +1,22 @@
 {
     "CodeGPT.maxTokens": 500,
     "CodeGPT.model": "text-davinci-003",
-    "CodeGPT.query.language": "Spanish"
+    "CodeGPT.query.language": "Spanish",
+    "sqltools.connections": [
+        {
+            "mssqlOptions": {
+                "appName": "SQLTools",
+                "useUTC": true,
+                "encrypt": true
+            },
+            "previewLimit": 50,
+            "server": "52.73.90.10",
+            "port": 1433,
+            "driver": "MSSQL",
+            "name": "RRHH",
+            "database": "RecursosHumanos",
+            "username": "dbepsgrau",
+            "password": "ycd9m!X%KTs3"
+        }
+    ]
 }

@@ -1,0 +1,32 @@
+export class DatosDesague{
+actividades?: string;
+  descripcionCiuu?: string;
+  distanciaExtremoIzqCaja?: number;
+  distanciaFronteraCaja?: number;
+  fechaCodesa?: string;
+  flagAtorosFugas?: boolean;
+  flagCajaVisible?: boolean;
+  flagPoseeTrampaGrasa?: boolean;
+  flagPuntoMuestreo?: boolean;
+  idCaracteDesague?: string;
+  idCiuu?: string;
+  idDiametroCodesa?: string;
+  idDiametroRedColectora?: string;
+  idEstadoCajaDesagueT?: string;
+  idEstadoTapaT?: string;
+  idLocalizacionPuntoMuestreo?: string;
+  idLocalizacionTrampaGrasa?: string;
+  idMarcoTapaT?: string;
+  idMaterialCajaDesague?: string;
+  idMaterialDesague?: string;
+  idMaterialTapaT?: string;
+  idSectorConDesa?: number;
+  idSituCodesa?: string;
+  idTipoDesague?: string;
+  idTipoDesecho?: string;
+  idTipoEntidadEjecutora?: string;
+  idUbiCajaDesague?: string;
+  longiCodesa?: string;
+  numInscripcion?: number;
+  razonSocial?: string;
+}

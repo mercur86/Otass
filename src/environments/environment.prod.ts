@@ -1,6 +1,9 @@
 export const environment = {
   production: false,
   TASA: 0.0124,
-  VERSIONAPP:'1.1',
-  ROOTAPI:'https://sisgeco.epsgrau.pe/SISGECO/servicioWeb/'
+  VERSIONAPP:'2.2',
+  //ROOTAPI:'https://sisgeco.epsgrau.pe/SISGECO/servicioWeb/'
+   ROOTAPI:'https://pruebas.epsgrau.pe/SISGECO/servicioWeb/',
+  // ROOTAPI:'http://localhost:8080/SistemaComercialEPS/servicioWeb/'
+
 };

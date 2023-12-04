@@ -9,6 +9,9 @@ import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Barcode, BarcodeScanner, LensFacing } from '@capacitor-mlkit/barcode-scanning';
 import { UtilServices } from '../services/utils.service';
 import { environment } from 'src/environments/environment.prod';
+import { FilePicker } from '@capawesome/capacitor-file-picker';
+import { EstadosVisita } from '../objetos/EstadosVisita';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-tab4',
@@ -17,7 +20,6 @@ import { environment } from 'src/environments/environment.prod';
 })
 export class Tab4Page implements OnInit {
   //qr 
-
   isSupported = false;
   barcodes: Barcode[] = [];
   public formGroup = new UntypedFormGroup({
@@ -39,9 +41,13 @@ export class Tab4Page implements OnInit {
   sgrabar?= false;
   idUs?: any;
   listaActividades: Actividades[] = [];
+  listaEstadosVisita: EstadosVisita[] = [];
   lectura: number = 0;
+  numNotificacion: number;
+  numCompromiso: number;
   ultimaLectura: any;
   selectedActividad: any;
+  selectedEstadoVisita: any;
   watchId: any; // para geolocalizar
   usuarioId: any;
   tipoUsuario?: any;
@@ -51,7 +57,7 @@ export class Tab4Page implements OnInit {
   provinciaUser: any;
   distritoUser: any;
   codCatastral: any;
-  bas64: any;
+  bas64: any[] = [];
   rol: any;
   rolMorosos = false;
   rolConsumo = false;
@@ -61,17 +67,22 @@ export class Tab4Page implements OnInit {
   idProyectoOtassZonal: any;
   acuary = true;
   logMovimientos: any;
+  mantenerDatos?: boolean = false;
   // data qr
   ocultarSelectActividad = false;
   idActivida: any;
   descActividad: any;
   flagQR = false;
+  valor: any;
   public photos: UserPhoto[] = [];
+  filesFotosCamara: File[] = [];
+  filesFotosGalery: File[] = [];
   constructor(
     private http: HttpClient,
     public photoService: PhotoService,
     public alertController: AlertController,
     private router: Router,
+    private api: ApiService,
     private utils: UtilServices) {
   }
 
@@ -102,6 +113,7 @@ export class Tab4Page implements OnInit {
     this.idUs = localStorage.getItem('idUsuario');
     this.tipoUsuario = localStorage.getItem('perfil');
     const actividades = localStorage.getItem('actividades');
+    const estadoVisita = localStorage.getItem('estadoVisita');
     this.provinciaUser = localStorage.getItem('provincia');
     this.distritoUser = localStorage.getItem('distrito');
     const log = localStorage.getItem('logMovimientos') || '';
@@ -111,7 +123,10 @@ export class Tab4Page implements OnInit {
       this.listaActividades = JSON.parse(actividades);
       // Hacer algo con los datos almacenados en el array 'impedimentosArray'
     }
-    //await this.printCurrentPosition();
+    if (estadoVisita) {
+      this.listaEstadosVisita = JSON.parse(estadoVisita);
+      // Hacer algo con los datos almacenados en el array 'impedimentosArray'
+    }
   }
 
   ionViewDidLeave() {// se ejecuta al salir del componente
@@ -157,7 +172,7 @@ export class Tab4Page implements OnInit {
     this.descActividad = objParse.desActividad;
 
     const tipoBusqueda = 1;
-    this.obtenerDatosSuministro(this.suministro, tipoBusqueda);
+    this.obtenerDatosSuministro(this.suministro, tipoBusqueda, this.idUs, this.nombreUser);
     localStorage.setItem('suministro', this.suministro);
   }
 
@@ -168,8 +183,8 @@ export class Tab4Page implements OnInit {
       console.log("foto tomada");
       this.sgrabar = true;
       const files = await this.convertPhotosToFiles();
+      this.filesFotosCamara = files;
       this.bas64 = await this.convertFilesToBase64(files);
-      console.log(this.bas64);
 
     }
   }
@@ -219,22 +234,91 @@ export class Tab4Page implements OnInit {
 
 
   async guardarActividad() {
+    if (this.isPhotoGallery) {
+      this.guardar(this.filesFotosGalery);
+    } else {
+      this.guardar(this.filesFotosCamara);
+    }
+
+  }
+
+  async guardar(fotos: any) {
+    var numNot = -1;
+    var numComp = -1;
+    if (this.numNotificacion) {
+      numNot = this.numNotificacion
+    }
+
+    if (this.numCompromiso) {
+      numComp = this.numCompromiso
+
+    }
+
     if (this.nombre) {
       if (this.selectedActividad) {
-        if (this.bas64) {
+        if(this.selectedEstadoVisita){
+        if (true) { // this.base64[0] aca permito que sea opcional la foto
           this.utils.loader(); // carga el loader de espera 
-          const body = {
-            archivoBase64Original: this.bas64[0],
+
+          const formData = new FormData();
+          formData.append('numInscripcion', this.suministro);
+          formData.append('longitud', this.longitud);
+          formData.append('latitud', this.latitud);
+          formData.append('idPersona', this.idUs);
+          formData.append('nombreCompleto', this.nombreUser);
+          formData.append('idProyectoOtass', this.idProyectoOtass);
+          formData.append('idProyectoOtassZonal', this.idProyectoOtassZonal);
+          formData.append('idActividad', this.selectedActividad);
+          formData.append('idEstadoVisitaT', this.selectedEstadoVisita);
+          formData.append('lectura', this.lectura.toString());
+          formData.append('numNotificacion', numNot.toString());
+          formData.append('numCompromisoPago', numComp.toString());
+          formData.append('flagUsoQr', this.flagQR.toString());
+          formData.append('observacion', this.observacion);
+
+          if (fotos.length > 0 && fotos.length < 2) {
+            formData.append('foto1', fotos[0]);
+            const file = new File([''], '', { type: 'text/plain' });
+            formData.append('foto2', file);
+            formData.append('foto3', file);
+          } else if (fotos.length > 1 && fotos.length < 3) {
+            formData.append('foto1', fotos[0]);
+            formData.append('foto2', fotos[1]);
+            const file = new File([''], '', { type: 'text/plain' });
+            formData.append('foto3', file);
+          } else if (fotos.length > 2 && fotos.length < 4) {
+            formData.append('foto1', fotos[0]);
+            formData.append('foto2', fotos[1]);
+            formData.append('foto3', fotos[2]);
+          }else if (fotos.length ==0){
+            const file = new File([''], '', { type: 'text/plain' });
+            formData.append('foto1', file);
+            formData.append('foto2', file);
+            formData.append('foto3', file);
+
+          }else if (fotos.length > 3){
+            formData.append('foto1', fotos[0]);
+            formData.append('foto2', fotos[1]);
+            formData.append('foto3', fotos[2]);
           }
-          if (this.observacion != '') { }
-          this.http.post<any>(environment.ROOTAPI + 'registrarVisitaProyectoOtass/' + this.suministro + '/' + this.longitud + '/' + this.latitud + '/' + this.idUs + '/' + this.nombreUser + '/' + this.idProyectoOtass + '/' + this.idProyectoOtassZonal + '/' + this.selectedActividad + '/' + this.lectura + '/' + this.flagQR + '/' + this.observacion + '.htm', body)
-            .subscribe({
+
+
+          this.http.post<any>(environment.ROOTAPI + 'registrarVisitaI3.htm', formData).subscribe(
+            {
               next: response => {
                 if (response.id == '1') {
                   this.utils.closeLoader();
                   //this.utils.mostrarToast(response.mensaje, 1000, 'success');
-                  this.limpiar();
-                  this.utils.presentAlertPersonalizado('INFO.', 'Notificado Correctamente');
+                  if (this.mantenerDatos) {
+                    //limpiar solo la actividad
+                    this.selectedActividad = '';
+                    this.selectedEstadoVisita = '';
+                  } else {
+                    console.log('entro a else');
+                    this.limpiar(); // limpiar todo
+                  }
+
+                  this.utils.presentAlertPersonalizado('', 'Notificado Correctamente');
                 } else if (response.id == '2') {
                   console.error(response.mensaje);
                   this.utils.closeLoader();
@@ -242,32 +326,31 @@ export class Tab4Page implements OnInit {
                 } else if (response.id == '3') {
                   console.error(response.mensaje);
                   this.utils.closeLoader();
-                  this.utils.mostrarToast(response.mensaje, 5000, 'danger');
+                  this.utils.mostrarToast('ERROR AL REGISTRAR', 5000, 'danger');
                 }
-
               },
-              error: error => {
+              error: (error) => {
                 this.utils.closeLoader();
                 console.error(error);
-                this.utils.mostrarToast(JSON.stringify(error), 5000, 'danger');
-
-              },
-              complete: () => {
-                console.log('consumo completado');
-              },
-            });
+                //this.utils.mostrarToast(JSON.stringify(error), 5000, 'danger');
+              }
+            }
+          );
+         
 
         } else {
-          this.utils.presentAlertPersonalizado('ALERTA', 'Debe tomar una foto');
+          this.utils.presentAlertPersonalizado('', 'Debe tomar una foto');
         }
+      }else{
+        this.utils.presentAlertPersonalizadoDanger('', 'Debes seleccionar una estado de visita');
+      }
       } else {
-        this.utils.presentAlertPersonalizado('ALERTA', 'Debes seleccionar una actividad');
+        this.utils.presentAlertPersonalizadoDanger('', 'Debes seleccionar una actividad');
 
       }
     } else {
-      this.utils.presentAlertPersonalizado('ALERTA', 'Debes Cargar un suministro');
+      this.utils.presentAlertPersonalizadoDanger('', 'Debes Cargar un suministro');
     }
-
   }
 
   limpiar() {
@@ -280,9 +363,9 @@ export class Tab4Page implements OnInit {
     this.photoService.photos = [];
     this.suministro = '';
     this.provincia = '',
-    this.distrito = '',
-    this.codCatastral = '',
-    this.selectedActividad = '';
+      this.distrito = '',
+      this.codCatastral = '',
+      this.selectedActividad = '';
     this.categoria = '';
     this.lectura = 0;
     this.ultimaLectura = '';
@@ -290,7 +373,10 @@ export class Tab4Page implements OnInit {
     this.sgrabar = false;
     this.idActivida = '';
     this.descActividad = '';
+    this.images = [];
   }
+
+
 
   getPeriodo() {
     const currentDate = new Date();
@@ -318,7 +404,7 @@ export class Tab4Page implements OnInit {
         return fetch(photo.webviewPath)
           .then(response => response.blob())
           .then(blob => {
-            const filename = this.getFilenameFromPath(photo.webviewPath);
+            const filename = this.getFilenameFromPath(photo.webviewPath) + '.jpg';
             return new File([blob], filename);
           });
       } else {
@@ -369,7 +455,7 @@ export class Tab4Page implements OnInit {
       this.usuarioId = localStorage.getItem('idUsuario');
       localStorage.setItem('suministro', this.suministro);
       const tipoBusqueda = 0;
-      this.obtenerDatosSuministro(this.suministro, tipoBusqueda);
+      this.obtenerDatosSuministro(this.suministro, tipoBusqueda, this.usuarioId, this.nombreUser);
 
     } else {
       localStorage.removeItem('suministro');
@@ -378,7 +464,7 @@ export class Tab4Page implements OnInit {
   }
 
 
-  obtenerDatosSuministro(suministro: any, tipoBusqueda: any) {
+  obtenerDatosSuministro(suministro: any, tipoBusqueda: any, idPersona: string, nombrePersona: string) {
     if (tipoBusqueda == 0) {//busqueda normal
       this.ocultarSelectActividad = false;
       this.flagQR = false;
@@ -387,7 +473,7 @@ export class Tab4Page implements OnInit {
       this.ocultarSelectActividad = true;
       this.flagQR = true;
     }
-    this.http.get<any>(environment.ROOTAPI + 'buscarSuministro/' + suministro + '.htm ')
+    this.http.get<any>(environment.ROOTAPI + 'buscarSuministro/' + suministro + '/' + idPersona + '/' + nombrePersona + '.htm ')
       .subscribe({
         next: response => {
           if (response.id == '1') {
@@ -423,16 +509,18 @@ export class Tab4Page implements OnInit {
 
 
   async regresarToLogin() {
+    this.router.navigate(['/tab1']);
     const tipoMvimiento = 2;
     const log = this.logMovimientos;
-    this.enviarInformacionDispositivo(this.idUs, tipoMvimiento, log.idCelular,log.ipCelular, log.modeloCelular, log.versionOS, 'CERRAR SESION');
+    console.log('cerraR CESION');
+    console.log(JSON.stringify(log));
+    this.enviarInformacionDispositivo(this.idUs, this.nombreUser, tipoMvimiento, log.idCelular, log.ipCelular, log.modeloCelular, log.versionOS, 'CERRAR SESION');
     console.log('limpiar localstorage');
-    localStorage.clear();
-    this.router.navigate(['/tab1']);
+    //localStorage.clear();
   }
 
-  enviarInformacionDispositivo(idUs: any, tipoMovimiento: any, idCelular: any, ipCelular: any, modeloCelular: any, versionOs: any, observacion: any) {
-    this.http.get(environment.ROOTAPI + 'registrarAppInOut/' + idUs + '/' + tipoMovimiento + '/' + idCelular + '/' + ipCelular + '/' + modeloCelular + '/' + versionOs + '/' + observacion + '.htm').subscribe({
+  enviarInformacionDispositivo(idUs: any, nombreCompleto: any, tipoMovimiento: any, idCelular: any, ipCelular: any, modeloCelular: any, versionOs: any, observacion: any) {
+    this.http.get(environment.ROOTAPI + 'registrarAppInOut/' + idUs + '/' + nombreCompleto + '/' + tipoMovimiento + '/' + idCelular + '/' + ipCelular + '/' + modeloCelular + '/' + versionOs + '/' + observacion + '.htm').subscribe({
       next: response => {
         console.log(response);
       },
@@ -452,6 +540,77 @@ export class Tab4Page implements OnInit {
   onActividadSelect(event: any) {
     console.log(event);//realizar una accion al seleccionar un select 
   }
+  onEstadoVisitaSelect(event: any) {
+    console.log(event);//realizar una accion al seleccionar un select 
+  }
+
+
+  togleMantenerDatos() {
+
+    // Puedes hacer lo que desees con this.toggleValue, como enviarlo a una API o realizar otras acciones.
+    this.mantenerDatos = !this.mantenerDatos;
+    console.log('Valor del toggle:', this.mantenerDatos);
+  }
+
+  public async readImagesFromGallery(): Promise<void> {
+    const { files } = await FilePicker.pickImages({ multiple: true }); // Habilita la opción de seleccionar múltiples imágenes
+    const paths: string[] = [];
+
+    if (!files || files.length === 0) {
+      return;
+    }
+
+    for (const file of files) {
+      if (file.path) {
+        paths.push(file.path);
+      }
+    }
+
+    // Ahora 'paths' contendrá las rutas de las imágenes seleccionadas
+    console.log("Rutas de las imágenes seleccionadas:", paths);
+  }
+
+  async readBarcodeFromImage(): Promise<void> {
+    const { files } = await FilePicker.pickImages({ multiple: false });
+    const path = files[0]?.path;
+    if (!path) {
+      return;
+    }
+    console.log('**' + files);
+  }
+
+
+  images: any[] = [];
+  isPhotoGallery = false;
+
+  async pickImages() {
+
+    const result = await FilePicker.pickImages({
+      multiple: true,
+      readData: true
+    });
+    // Recorrer cada archivo
+    result.files.forEach(file => {
+      // Completar el base64
+      const base64 = 'data:image/jpeg;base64,' + file.data;
+      // Agregar al array
+    this.images.push(base64); // este array se muestra en el frond
+    if(file.blob){
+      const files = new File([file.blob], file.name, { type: file.mimeType });
+      this.filesFotosGalery.push(files); // este array se envia al multpart formdata
+    }
+  
+      
+    });
+
+    
+    if (this.images.length > 0) {
+      this.isPhotoGallery = true;
+    } else {
+      this.isPhotoGallery = false;
+    }
+  }
+
 
 }
 

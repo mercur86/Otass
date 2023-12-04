@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 import { UtilServices } from '../services/utils.service';
 @Component({
   selector: 'app-tab5',
@@ -19,6 +19,8 @@ export class Tab5Page {
   mostrarCardCalcular = false;
   tasa: number;
   listaSimulacionDeuda: any;
+  idUs:any;
+  nombreUser:any;
   constructor(private router: Router, public navCtrl: NavController, private http: HttpClient, private utils: UtilServices) { }
 
   ngOnInit() {
@@ -26,6 +28,8 @@ export class Tab5Page {
 
   }
   ionViewWillEnter() {
+    this.nombreUser = localStorage.getItem('nombreUser');
+    this.idUs = localStorage.getItem('idUsuario');
     this.tasa = environment.TASA;
     this.suminsitro = localStorage.getItem('suministro');
     this.monto = parseFloat('' + localStorage.getItem('montoDeuda'));
@@ -72,7 +76,7 @@ export class Tab5Page {
     if (this.cuotaInicial) {
 
       this.mostrarCardCalcular = true;
-      this.http.post<any>(environment.ROOTAPI +'generarSimulacionCuotasConvenio/' + this.cuotaInicial + '/' + this.saldoFinanciar + '/' + this.numeroCuotas + '/' + this.tasa + '/' + this.montoCantidadFija + '.htm', {})
+      this.http.post<any>(environment.ROOTAPI +'generarSimulacionCuotasConvenio/' + this.idUs+'/'+this.nombreUser+'/'+ this.cuotaInicial + '/' + this.saldoFinanciar + '/' + this.numeroCuotas + '/' + this.tasa + '/' + this.montoCantidadFija +'.htm', {})
         .subscribe({
           next:response => {
             if (response.id == '1') {

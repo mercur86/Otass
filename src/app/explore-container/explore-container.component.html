@@ -1,4 +1,621 @@
-<div id="container">
-  <strong>{{ name }}</strong>
-  <p>Explore <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-</div>
+
+
+  <ion-accordion-group multiple="true" [value]="['first']">
+    <!-- PRIMER ACORDION IDENTIFICACION -->
+      <ion-accordion value="first">
+        <ion-item slot="header" color="light">
+          <ion-label>IDENTIFICACIÓN</ion-label>
+        </ion-item>
+        <div  slot="content" style="margin: 0%;">
+          
+            <ion-item  lines="none">
+              <ion-searchbar style="margin-top: 2%;" type="number" [debounce]="500" (ionInput)=" buscar($event)"
+                placeholder="Digite suministro"></ion-searchbar>
+            </ion-item>
+            <ion-item lines="none">
+    
+              <ion-grid [fixed]="true" class="custom-background" >
+                <ion-row>
+                  <ion-col> 
+                    <h6> CODIGO CATASTRAL ACTUAL</h6>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>
+                    <ion-label>PROV</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-label>DIST</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-label>SECT</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-label>MNZ</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-label>LT</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-label>SLT</ion-label>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>
+                    <ion-input class="inputCatastral" [(ngModel)]="codActualCatastro.idProvincia" readonly="true"></ion-input>
+                  </ion-col>
+                  <ion-col>
+                    <ion-input class="inputCatastral" [(ngModel)]="codActualCatastro.idDistrito"  readonly="true"></ion-input>
+                  </ion-col>
+                  <ion-col>
+                    <ion-input class="inputCatastral" [(ngModel)]="codActualCatastro.idSector"  readonly="true"></ion-input>
+                  </ion-col>
+                  <ion-col>
+                    <ion-input class="inputCatastral" [(ngModel)]="codActualCatastro.idManzana"  readonly="true"></ion-input>
+                  </ion-col>
+                  <ion-col>
+                    <ion-input class="inputCatastral" [(ngModel)]="codActualCatastro.lote"  readonly="true"></ion-input>
+                  </ion-col>
+                  <ion-col>
+                    <ion-input class="inputCatastral" [(ngModel)]="codActualCatastro.sublote"  readonly="true" ></ion-input>
+                  </ion-col>
+                </ion-row>
+               <!--<ion-row *ngIf="mostrarCodCatastralNuevo">
+                  <ion-col>
+                    <h6> CODIGO CATASTRAL NUEVO</h6>
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="mostrarCodCatastralNuevo">
+                  <ion-col>
+                    <ion-input class="inputCatastral" [(ngModel)]="codNuevoCatastro.idProvincia"  (input)="presentPopover($event)"></ion-input>
+                    <ion-popover #popover [isOpen]="isOpen" (didDismiss)="isOpen = false" [dismissOnSelect]="true">
+                      <ng-template>
+                        <ion-content>
+                          <ion-list *ngFor="let provincias of provincias">
+                            <ion-item [button]="true"  (click)="selectProvincia(provincias)">{{provincias.idProvincia}} - {{provincias.descripcionProvincia}}</ion-item>
+                          </ion-list>
+                        </ion-content>
+                      </ng-template>
+                    </ion-popover>
+                  </ion-col>
+                  <ion-col>
+                    <ion-input class="inputCatastral"  [(ngModel)]="codNuevoCatastro.idDistrito" (input)="presentPopover1($event)"></ion-input>
+                    <ion-popover #popover1 [isOpen]="isOpen1" (didDismiss)="isOpen1 = false" [dismissOnSelect]="true">
+                      <ng-template>
+                        <ion-content>
+                          <ion-list *ngFor="let distritos of distritos">
+                            <ion-item [button]="true"  (click)="selectDistrito(distritos)">{{distritos.idDistrito}} - {{distritos.descripcionDistrito}}</ion-item>
+                          </ion-list>
+                        </ion-content>
+                      </ng-template>
+                    </ion-popover>
+                  </ion-col>
+                  <ion-col>
+                    <ion-input class="inputCatastral"  [(ngModel)]="codNuevoCatastro.idSector"></ion-input>
+                  </ion-col>
+                  <ion-col>
+                    <ion-input class="inputCatastral"  [(ngModel)]="codNuevoCatastro.idManzana"></ion-input>
+                  </ion-col>
+                  <ion-col>
+                    <ion-input class="inputCatastral"  [(ngModel)]="codNuevoCatastro.lote"></ion-input>
+                  </ion-col>
+                  <ion-col>
+                    <ion-input class="inputCatastral" [(ngModel)]="codNuevoCatastro.sublote"></ion-input>
+                  </ion-col>
+                </ion-row> -->
+              </ion-grid>
+    
+            </ion-item>
+          
+        </div>
+      </ion-accordion>
+      <!-- segundo acordion DATOS DEL CLIENTE------------------------------------------------------------------------------- -->
+      <ion-accordion value="second">
+        <ion-item slot="header" color="light">
+          <ion-label>DATOS DEL CLIENTE</ion-label>
+        </ion-item>
+        <div slot="content">
+          <ion-item lines="none">
+           <!-- <ion-grid>
+              <ion-row>
+                <ion-col size="5">
+                  <ion-select  interface="action-sheet" label="Tipo Doc." [(ngModel)]="datosCliente.idTipoDocT">
+                    <ion-select-option value="1">DNI</ion-select-option>
+                    <ion-select-option value="2">RUC</ion-select-option>
+                    <ion-select-option value="3">CARNET EXTRANJERIA</ion-select-option>
+                  </ion-select>
+                </ion-col>
+                <ion-col>
+                  <ion-input class="inputCatastral"  [(ngModel)]="datosCliente.idCliente" > </ion-input>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+  
+          </ion-item >
+          <ion-item lines="none">
+            <ion-grid>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>NOMBRES</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-input class="inputCatastral" [(ngModel)]="datosCliente.nombres"> </ion-input>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>APELLIDO PAT.</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-input class="inputCatastral" [(ngModel)]="datosCliente.apellidoPaterno"> </ion-input>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>APELLIDO MAT.</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-input class="inputCatastral" [(ngModel)]="datosCliente.apellidoMaterno"> </ion-input>
+                </ion-col>
+              </ion-row>
+             
+            </ion-grid>-->
+            <ion-label>DNI: {{datosCliente.idCliente}} </ion-label>
+           
+          </ion-item>
+          <ion-item> 
+            <ion-textarea readonly="">NOMBRES: {{datosCliente.nombres}} {{datosCliente.apellidoPaterno}} {{datosCliente.apellidoMaterno}} </ion-textarea>
+          </ion-item>
+        </div>
+      </ion-accordion>
+      <!-- TERCER ACORDION DIRECCION DEL PREDIO--------------------------------------------------------------------------- -->
+      <ion-accordion value="tercero">
+        <ion-item slot="header" color="light">
+          <ion-label>DIRECCION DEL PREDIO</ion-label>
+        </ion-item>
+        <div slot="content">
+          <ion-item lines="none">
+            <!--<ion-grid fixed="true">
+              <ion-row>
+                <ion-col size="5">
+                  <ion-input placeholder="Provincia" class="inputCatastral" [(ngModel)]="direccionPredio.descProvincia"  (input)="presentPopover2($event)"></ion-input>
+                  <ion-popover #popover2 [isOpen]="isOpen2" (didDismiss)="isOpen2 = false" [dismissOnSelect]="true">
+                    <ng-template>
+                      <ion-content>
+                        <ion-list *ngFor="let provincias of provinciasaux">
+                          <ion-item [button]="true"  (click)="selectProvinciaDireccion(provincias)">{{provincias.idProvincia}} - {{provincias.descripcionProvincia}}</ion-item>
+                        </ion-list>
+                      </ion-content>
+                    </ng-template>
+                  </ion-popover>
+                </ion-col>
+                <ion-col>
+                  <ion-input placeholder="Distrito" class="inputCatastral"  [(ngModel)]="direccionPredio.descDistrito" (input)="presentPopover3($event)"></ion-input>
+                <ion-popover #popover3 [isOpen]="isOpen3" (didDismiss)="isOpen3 = false" [dismissOnSelect]="true">
+                  <ng-template>
+                    <ion-content>
+                      <ion-list *ngFor="let distritos of distritos">
+                        <ion-item [button]="true"  (click)="selectDistritoDireccion(distritos)">{{distritos.idDistrito}} - {{distritos.descripcionDistrito}}</ion-item>
+                      </ion-list>
+                    </ion-content>
+                  </ng-template>
+                </ion-popover>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-input placeholder="Zona" class="inputCatastral"  [(ngModel)]="datosZona.descripcion_zona" (input)="presentPopover4($event)"></ion-input>
+                <ion-popover #popover4 [isOpen]="isOpen4" (didDismiss)="isOpen4 = false" [dismissOnSelect]="true">
+                  <ng-template>
+                    <ion-content>
+                      <ion-searchbar [debounce]="1000" (ionInput)="handleInputZonas($event)" [autofocus]="true" ></ion-searchbar>
+                      <ion-list *ngFor="let zonas of results">
+                        <ion-item [button]="true"  (click)="selectZonaDireccion(zonas)">{{zonas.descripcion_zona}}</ion-item>
+                      </ion-list>
+                    </ion-content>
+                  </ng-template>
+                </ion-popover>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-input placeholder="Vía" class="inputCatastral"  [(ngModel)]="datosVias.descripcion_via" (input)="presentPopover5($event)"></ion-input>
+                <ion-popover #popover5 [isOpen]="isOpen5" (didDismiss)="isOpen5 = false" [dismissOnSelect]="true">
+                  <ng-template>
+                    <ion-content>
+                      <ion-searchbar [debounce]="1000" (ionInput)="handleInputVias($event)" [autofocus]="true" ></ion-searchbar>
+                      <ion-list *ngFor="let vias of resultsVias">
+                        <ion-item [button]="true"  (click)="selectViaDireccion(vias)">{{vias.descripcion_via}}</ion-item>
+                      </ion-list>
+                    </ion-content>
+                  </ng-template>
+                </ion-popover>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-label>MZN</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-input class="inputCatastral" [(ngModel)]="direccionPredio.manzana"> </ion-input>
+                </ion-col>
+                <ion-col>
+                  <ion-label>LOTE</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-input class="inputCatastral" [(ngModel)]="direccionPredio.lote"> </ion-input>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-label>PISO</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-input class="inputCatastral" [(ngModel)]="direccionPredio.piso"> </ion-input>
+                </ion-col>
+                
+                <ion-col>
+                  <ion-label>NÚMERO</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-input class="inputCatastral" [(ngModel)]="direccionPredio.numPredio" > </ion-input>
+                </ion-col>
+  
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-label>N° MUNI.</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-input class="inputCatastral"  [(ngModel)]="direccionPredio.numeroMunicipal"> </ion-input>
+                </ion-col>
+                <ion-col>
+                  <ion-label>BLOCK</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-input class="inputCatastral" [(ngModel)]="direccionPredio.block" > </ion-input>
+                </ion-col>
+              </ion-row>
+            </ion-grid>-->
+            <ion-textarea readonly>
+              {{direccionPredio.direccionCompleta}}
+            </ion-textarea>
+          </ion-item>
+        </div>
+      </ion-accordion>
+      <!-- CUARTO ACORDION DATOS CONEXION DE AGUA-------------------------------------------------------------------------- -->
+      <ion-accordion value="setimo">
+        <ion-item slot="header" color="light">
+          <ion-label>DATOS DE LA CONEXIÓN DE AGUA</ion-label>
+        </ion-item>
+        <div  slot="content">
+          <ion-row>
+            <ion-col><ion-toggle [checked]="conexionAgua.flagCajaVisible" (ionChange)="togleConexionAgua()">CAJA NO VISIBLE</ion-toggle></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col >
+              <ion-select  interface="action-sheet" label="SITUACION CONEXION"  [(ngModel)]="conexionAgua.idSituConAgua">
+                <ion-select-option value="1">ACTIVA</ion-select-option>
+                <ion-select-option value="2">CORTADA</ion-select-option>
+                <ion-select-option value="3">CLAUSURADA</ion-select-option>
+                <ion-select-option value="4">LEVANTADA</ion-select-option>
+                <ion-select-option value="5">SIN CONEXION</ion-select-option>
+                <ion-select-option value="6">RESP. DE PAGO</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col >
+              <ion-select  interface="action-sheet" label="SITUACION CAJA"  [(ngModel)]="conexionAgua.idSituacionCajaAguaT">
+                <ion-select-option value="1">CAJA Y MED.</ion-select-option>
+                <ion-select-option value="2">CAJA Y NIPLE</ion-select-option>
+                <ion-select-option value="3">CAJA Y CONEX. DIRECTA</ion-select-option>
+                <ion-select-option value="4">CAJA S/MED/NIPLE</ion-select-option>
+                <ion-select-option value="5">SIN CAJA Y DIRECTA</ion-select-option>
+                <ion-select-option value="6">OTRO</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select  interface="action-sheet"  label="UBICACION CAJA/CONEX" [(ngModel)]="conexionAgua.idUbiCajaAgua">
+                <ion-select-option value="1">EN LA VEREDA</ion-select-option>
+                <ion-select-option value="2">EN LA PISTA</ion-select-option>
+                <ion-select-option value="3">EN EL JARDIN</ion-select-option>
+                <ion-select-option value="4">EN INTER.DEL PREDIO</ion-select-option>
+                <ion-select-option value="5">POR LA LATERAL IZQU.</ion-select-option>
+                <ion-select-option value="6">POR LA LATERAL DEREC</ion-select-option>
+                <ion-select-option value="7">POR LOS FONDOS</ion-select-option>
+                <ion-select-option value="8">TIERRA</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select  interface="action-sheet" label="DIAMETRO CONEX" [(ngModel)]="conexionAgua.idDiametroConAgua">
+                <ion-select-option value="1">1/2" - 15 mm</ion-select-option>
+                <ion-select-option value="2">3/4 " - 20mm</ion-select-option>
+                <ion-select-option value="3">1 " - 25mm</ion-select-option>
+                <ion-select-option value="4">1 1/2 " - 40mm</ion-select-option>
+                <ion-select-option value="5">2 " - 50mm</ion-select-option>
+                <ion-select-option value="6">3 " - 80mm</ion-select-option>
+                <ion-select-option value="7">4 " - 100mm</ion-select-option>
+                <ion-select-option value="8">6 " - 150mm</ion-select-option>
+                <ion-select-option value="9">8 "</ion-select-option>
+                <ion-select-option value="10">10 "</ion-select-option>
+                <ion-select-option value="11">12 "</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select  interface="action-sheet" label="MARCO TAPA"  [(ngModel)]="conexionAgua.idMarcoTapaT">
+                <ion-select-option value="1">SIN MARCO Y SIN TAPA</ion-select-option>
+                <ion-select-option value="2">SIN CAJA</ion-select-option>
+                <ion-select-option value="3">CON MARCO Y CON TAPA</ion-select-option>
+                <ion-select-option value="4">CON MARCO Y SIN TAPA</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select  interface="action-sheet" label="MATER. CAJA" [(ngModel)]="conexionAgua.idMaterialCajaAgua">
+                <ion-select-option value="1">F.G.</ion-select-option>
+                <ion-select-option value="2">P.V.C.</ion-select-option>
+                <ion-select-option value="3">PLOMO</ion-select-option>
+                <ion-select-option value="4">C.S.N.</ion-select-option>
+                <ion-select-option value="5">CONCRETO</ion-select-option>
+                <ion-select-option value="6">METAL</ion-select-option>
+                <ion-select-option value="7">LADRILLO</ion-select-option>
+                <ion-select-option value="9">TERMOPLAST</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select  interface="action-sheet" label="MAT. MARCO CAJA"  [(ngModel)]="conexionAgua.idMaterialMarcoTapaT">
+                <ion-select-option value="1">TERMOPLASTICA CON VISOR</ion-select-option>
+                <ion-select-option value="2">TERMOPLASTICA SIN VISOR</ion-select-option>
+                <ion-select-option value="3">FIERRO GALVANIZADO</ion-select-option>
+                <ion-select-option value="4">CONCRETO</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select  interface="action-sheet"  label="ESTADO MARCO  CAJA"  [(ngModel)]="conexionAgua.idEstadoMarcoTapaT">
+                <ion-select-option value="1">BUENA CONDICION</ion-select-option>
+                <ion-select-option value="2">MAL ESTADO</ion-select-option>
+                <ion-select-option value="3">SELLADA</ion-select-option>
+                <ion-select-option value="4">SIN PASADOR</ion-select-option>
+                <ion-select-option value="5">TAPA ROTA</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select  interface="action-sheet" label="(*)MATERIAL CONEXION"  [(ngModel)]="conexionAgua.idMaterialConAgua">
+                <ion-select-option value="1">F.G</ion-select-option>
+                <ion-select-option value="2">P.V.C</ion-select-option>
+                <ion-select-option value="3">PLOMO</ion-select-option>
+                <ion-select-option value="4">C.S.N</ion-select-option>
+                <ion-select-option value="8">OTROS</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select  interface="action-sheet" label="ESTADO CAJA" [(ngModel)]="conexionAgua.idMaterialConAgua">
+                <ion-select-option value="1">BUENA CONDICIÓN</ion-select-option>
+                <ion-select-option value="2">MAL ESTADO</ion-select-option>
+                <ion-select-option value="3">REGULAR</ion-select-option>
+                <ion-select-option value="4">OTRO</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-select  interface="action-sheet" label="EXISTEN FUGAS"  [(ngModel)]="conexionAgua.idExistenFugasT">
+                <ion-select-option value="1">SI, ANTES DE CAJA</ion-select-option>
+                <ion-select-option value="2">SI, DESPUES DE CAJA</ion-select-option>
+                <ion-select-option value="3">NO</ion-select-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
+        </div>
+      </ion-accordion>
+      <!-- QUINTO ACORDION VALORES MAXIMOS ADMISIBLES-->
+      <ion-accordion value="quinto">
+        <ion-item slot="header" color="light">
+          <ion-label>VALORES MAXIMOS ADMISIBLES</ion-label>
+        </ion-item>
+        <div  slot="content" style="margin: 0%;">
+          
+          <ion-item lines="none">
+            <p>
+              Describir principales actividades que desarrolla el predio relacionado a la descarga de aguas residuales
+            </p>
+          </ion-item>
+          <ion-item>
+            <ion-textarea placeholder="Escriba aquí" autoGrow="true" [(ngModel)]="datosValoresMaximos.actividad">
+            </ion-textarea>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-label>Razon social del negocio</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-textarea placeholder="Escriba aquí" autoGrow="true" [(ngModel)]="datosValoresMaximos.razonZocial">
+            </ion-textarea>
+          </ion-item>
+          
+        </div>
+      </ion-accordion>
+      <!-- SEXTO ACORDION DATOS DEL MEDIDOR-------------------------------------------------------------------------------- -->
+      <ion-accordion value="sexto">
+        <ion-item slot="header" color="light">
+          <ion-label>DATOS DEL MEDIDOR</ion-label>
+        </ion-item>
+        <div  slot="content">
+          <ion-item lines="none">
+            <ion-grid>
+              <ion-row>
+                <ion-col size="3">MEDIDOR  </ion-col>
+                <ion-col>   <ion-toggle [checked]="datosMedidor.flagTieneMedidor" (ionChange)="togleTieneMedidor()"></ion-toggle></ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>N° MED</ion-col>
+                <ion-col size="6"> <ion-input class="inputCatastral" [(ngModel)]="datosMedidor.idMedidor"> </ion-input></ion-col>
+                <ion-col>ILEGI</ion-col>
+                <ion-col> <ion-toggle [checked]="datosMedidor.flagLecturaIlegible" (ionChange)="togleLecturaIlegible()" ></ion-toggle></ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>LECT</ion-col>
+                <ion-col size="6"> <ion-input class="inputCatastral"  [(ngModel)]="datosMedidor.lectura"> </ion-input></ion-col>
+                <ion-col>ILEGI</ion-col>
+                <ion-col> <ion-toggle [checked]="datosMedidor.flagNumeroMedidorIlegible" (ionChange)="togleNumeroMedidorIlegible()"></ion-toggle></ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="9">
+                  <ion-select  interface="action-sheet" label="DIAMETRO" [(ngModel)]="datosMedidor.idDiametroMedidorT">
+                    <ion-select-option value="1">1/2" - 15 mm</ion-select-option>
+                    <ion-select-option value="2">3/4 " - 20mm</ion-select-option>
+                    <ion-select-option value="3">1 " - 25mm</ion-select-option>
+                    <ion-select-option value="4">1 1/2 " - 40mm</ion-select-option>
+                    <ion-select-option value="5">2 " - 50mm</ion-select-option>
+                    <ion-select-option value="6">3 " - 80mm</ion-select-option>
+                    <ion-select-option value="7">4 " - 100mm</ion-select-option>
+                    <ion-select-option value="8">6 " - 150mm</ion-select-option>
+                    <ion-select-option value="9">8 "</ion-select-option>
+                    <ion-select-option value="10">10 "</ion-select-option>
+                    <ion-select-option value="11">12 "</ion-select-option>
+                    <ion-select-option value="12">OTROS "</ion-select-option>
+                  </ion-select>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="9">
+                  <ion-select  interface="action-sheet" label="ESTADO MED" [(ngModel)]="datosMedidor.idEstadoMedidorT">
+                    <ion-select-option value="1">SIN ALTERACIONES</ion-select-option>
+                    <ion-select-option value="2">TRABADO</ion-select-option>
+                    <ion-select-option value="3">LUNA EMPAÑADA</ion-select-option>
+                    <ion-select-option value="4">LUNA ROTA</ion-select-option>
+                    <ion-select-option value="5">LUNA OPACA</ion-select-option>
+                    <ion-select-option value="6">MARCADOR ROTO</ion-select-option>
+                    <ion-select-option value="7">PARALIZADO</ion-select-option>
+                    <ion-select-option value="8">OTRO</ion-select-option>
+                  </ion-select>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="9">
+                  <ion-select  interface="action-sheet" label="LLAVE PASO" [(ngModel)]="datosMedidor.idLlavesPasoT">
+                    <ion-select-option value="1">SIN LLAVES DE PASO</ion-select-option>
+                    <ion-select-option value="2">ANTES</ion-select-option>
+                    <ion-select-option value="3">DESPUES EMPAÑADA</ion-select-option>
+                    <ion-select-option value="4">ANTES Y DESPUÉS</ion-select-option>
+                  </ion-select>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="9">
+                  <ion-select  interface="action-sheet" label="SEGURIDAD MED" [(ngModel)]="datosMedidor.idSeguridadMedidorT">
+                    <ion-select-option value="1">SIN DISPOSITIVO</ion-select-option>
+                    <ion-select-option value="2">PRECINTO</ion-select-option>
+                    <ion-select-option value="3">ANCLAJE</ion-select-option>
+                    <ion-select-option value="4">REJILLA</ion-select-option>
+                    <ion-select-option value="5">OTRO</ion-select-option>
+                  </ion-select>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="9">
+                  <ion-select  interface="action-sheet" label="POSICIÓN. MED" [(ngModel)]="datosMedidor.idPosicionMedidorT">
+                    <ion-select-option value="1">NORMAL</ion-select-option>
+                    <ion-select-option value="2">PROFUNDO</ion-select-option>
+                    <ion-select-option value="3">ENTERRADO</ion-select-option>
+                    <ion-select-option value="4">INVERTIDO</ion-select-option>
+                    <ion-select-option value="5">NO UBICADO</ion-select-option>
+                  </ion-select>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="9">
+                  <ion-label>MARCA MED</ion-label>
+                  <ion-input  [(ngModel)]="datosMedidor.idMarcaMedidor" class="inputCatastral">
+
+                  </ion-input>
+                 
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-item>
+        </div>
+      </ion-accordion>
+      <!-- DATOS DEL ENTREVISTADO setimo  --------------------------------------------------------------------------------- -->
+    <!--  <ion-accordion value="seven">
+        <ion-item slot="header" color="light">
+          <ion-label>DATOS DEL ENTREVISTADO</ion-label>
+        </ion-item>
+        <div slot="content">
+          <ion-item lines="none">
+            <ion-grid>
+              <ion-row>
+                <ion-col size="5">
+                  <ion-select  interface="action-sheet" label="Tipo Doc." [(ngModel)]="datosEntrevistado.idTipoDocT">
+                    <ion-select-option value="1">DNI</ion-select-option>
+                    <ion-select-option value="2">RUC</ion-select-option>
+                    <ion-select-option value="3">CARNET EXTRANJERIA</ion-select-option>
+                  </ion-select>
+                </ion-col>
+                <ion-col>
+                  <ion-input class="inputCatastral"  [(ngModel)]="datosEntrevistado.idCliente" > </ion-input>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+  
+          </ion-item >
+          <ion-item lines="none">
+            <ion-grid>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>NOMBRES</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-input class="inputCatastral" [(ngModel)]="datosEntrevistado.nombres"> </ion-input>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>APELLIDO PAT.</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-input class="inputCatastral" [(ngModel)]="datosEntrevistado.apellidoPaterno"> </ion-input>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>APELLIDO MAT.</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-input class="inputCatastral" [(ngModel)]="datosEntrevistado.apellidoMaterno"> </ion-input>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="5">
+                  <ion-select  interface="action-sheet" label="ENTREVISTADOR" [(ngModel)]="datosEntrevistador.codigo">
+                    <ion-select-option value="1">ENCUESTADOR</ion-select-option>
+                    <ion-select-option value="2">SUPERVISOR</ion-select-option>
+                    <ion-select-option value="3">DIGITADOR</ion-select-option>
+                  </ion-select>
+                </ion-col>
+                <ion-col>
+                  <ion-input class="inputCatastral"  [(ngModel)]="datosEntrevistador.nombrePersona" > </ion-input>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-item>
+        </div>
+      </ion-accordion> -->
+
+  </ion-accordion-group>
+  <ion-button (click)="grabar()">Grabar</ion-button>

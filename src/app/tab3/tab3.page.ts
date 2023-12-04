@@ -42,7 +42,7 @@ export class Tab3Page {
   }
 
   async listarAvance(dni: any) {
-    this.http.get<any>(environment.ROOTAPI+'buscarPadronVisitaAvancePorIdPersona/' + dni + '.htm')
+    this.http.get<any>(environment.ROOTAPI+'buscarPadronVisitaAvancePorIdPersona/' + dni +'/'+this.nombreUser+ '.htm')
       .subscribe({
         next: response => {
           if (response.id == '1') {
@@ -110,7 +110,7 @@ export class Tab3Page {
 
   eliminarAvance(id: any, index: any) {
     console.log(id);
-    this.http.get<any>(environment.ROOTAPI+'eliminarVisitaProyectoOtass/' + id + '.htm')
+    this.http.get<any>(environment.ROOTAPI+'eliminarVisitaProyectoOtass/' + id +'/'+this.idUs+ '/'+this.nombreUser+'.htm')
       .subscribe({
         next: response => {
           if (response.id == '1') {

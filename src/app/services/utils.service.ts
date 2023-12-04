@@ -14,15 +14,30 @@ export class UtilServices {
     /** 
      * muestra una alerta ".
      * @param {string} header - cabecera del alerta
-     * @param {string} mensaje - indicar mendaje a mostrar 
+     * @param {string} mensaje - indicar mensaje a mostrar 
      */
     async presentAlertPersonalizado(header:string,mensaje: string) {
         const alert = await this.alertController.create({
             header: header,
             message: mensaje,
+            cssClass: 'my-custom-class'
         });
         await alert.present();
     }
+
+        /** 
+     * muestra una alerta ".
+     * @param {string} header - cabecera del alerta
+     * @param {string} mensaje - indicar mendaje a mostrar 
+     */
+        async presentAlertPersonalizadoDanger(header:string,mensaje: string) {
+            const alert = await this.alertController.create({
+                header: header,
+                message: mensaje,
+                cssClass: 'alert-danger-class'
+            });
+            await alert.present();
+        }
 
     async loader() {
         this.loading = await this.loadingController.create({
@@ -33,7 +48,7 @@ export class UtilServices {
     }
 
     /** 
-     * muestra un mensaje temporal en toast".
+     * muestra un loader temporal".
      * @param {string} mensaje - indicar mendaje a mostrar 
      * @param {string} spinner - indicar tipo de spinner
      */
@@ -49,7 +64,7 @@ export class UtilServices {
     }
 
     /** 
-     * muestra un spinner de carga".
+     * muestra un toast ".
      * @param {string} mensaje - indicar mendaje a mostrar en toast
      * @param {number} tiempo - indicar tiempo en mili segundos
      * @param {string} color - Color danger, succes, warning.

@@ -45,7 +45,7 @@ export class Tab2Page {
     if (this.suminsitro == null) {
       this.listaCuentaCorriente = [];
     }
-    this.http.get<any>(environment.ROOTAPI+'consultarCuentaCorriente/' + this.suminsitro + '.htm')
+    this.http.get<any>(environment.ROOTAPI+'consultarCuentaCorriente/' + this.suminsitro + '/'+ this.idUs+'/'+this.nombreUser+'.htm')
       .subscribe( 
         {
           next: response => {

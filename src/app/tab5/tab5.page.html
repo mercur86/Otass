@@ -6,7 +6,6 @@
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
-  
   <ion-grid>
     <ion-row>
       <ion-item>
@@ -14,24 +13,25 @@
        </ion-item>
     </ion-row>
   </ion-grid>
+ 
   <ion-item>
-    <ion-label>MONTO</ion-label>
-    <ion-input type="number" [(ngModel)]="monto" ></ion-input>
+    <ion-label  >MONTO</ion-label>
+    <ion-input type="number" [(ngModel)]="monto"  ></ion-input>
   </ion-item>
   <ion-item>
-    <ion-label>CUOTA INICIAL</ion-label>
+    <ion-label >CUOTA INICIAL</ion-label>
     <ion-input (input)="recalcularSaldo($event)" type="number" [(ngModel)]="cuotaInicial" required="true"></ion-input>
   </ion-item>
   <ion-item>
-    <ion-label>SALDO A FINANCIAR</ion-label>
+    <ion-label >SALDO A FINANCIAR</ion-label>
     <ion-input type="number" [(ngModel)]="saldoFinanciar" readonly="true"></ion-input>
   </ion-item>
   <ion-item>
-    <ion-label>NUM. CUOTAS</ion-label>
+    <ion-label >NUM. CUOTAS</ion-label>
     <ion-input type="number" [(ngModel)]="numeroCuotas"></ion-input>
   </ion-item>
   <ion-item>
-    <ion-label>MONT. CUOTA FIJA</ion-label>
+    <ion-label >MONT. CUOTA FIJA</ion-label>
     <ion-input type="number" [(ngModel)]="montoCantidadFija"></ion-input>
   </ion-item>
 <ion-grid>
@@ -44,15 +44,15 @@
   </ion-row>
 </ion-grid>
  
-  <ion-card *ngIf="mostrarCardCalcular">
+  <!-- <ion-card *ngIf="mostrarCardCalcular"> 
     <ion-card-content>
       <ion-grid>
         <ion-row >
-          <ion-col  style="color: black;"> NUM CUOTA </ion-col>
-          <ion-col style="color: black;">PERIODO</ion-col>
-          <ion-col style="color: black;">CAPITAL</ion-col>
-          <ion-col style="color: black;">INTERES </ion-col>
-          <ion-col style="color: black;">TOTAL CUOTA </ion-col>
+          <ion-col> NUM CUOTA </ion-col>
+          <ion-col>PERIODO</ion-col>
+          <ion-col >CAPITAL</ion-col>
+          <ion-col>INTERES </ion-col>
+          <ion-col >TOTAL CUOTA </ion-col>
         </ion-row>
         <ion-row *ngFor=" let lista of listaSimulacionDeuda; let index">
           <ion-col>{{lista.num_cuota}}</ion-col>
@@ -63,6 +63,26 @@
         </ion-row>
       </ion-grid>
     </ion-card-content>
+  </ion-card> -->
+  
+  <ion-card *ngIf="mostrarCardCalcular">
+    <table class="w3-table">
+      <tr>
+        <th>N° CUOTA</th>
+        <th>PERIODO</th>
+        <th>CAPITAL</th>
+        <th>INTERES</th>
+        <th>TOTAL CUOTA</th>
+      </tr>
+      <tr *ngFor=" let lista of listaSimulacionDeuda; let index">
+        <td>{{lista.num_cuota}}</td>
+          <td>{{lista.periodo}}</td>
+          <td>{{lista.capital}}</td>
+          <td>{{lista.intereses}}</td>
+          <td>{{lista.total_cuota}}</td>
+      </tr>
+    </table>
   </ion-card>
+  
 </ion-content>
 

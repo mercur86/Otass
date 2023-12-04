@@ -4,8 +4,8 @@
     <ion-note color="primary"> {{nombreUser}} - {{idUs}}</ion-note>
   </ion-toolbar>
 </ion-header>
-<!-- contenedor de morosos activo he inactivos -->
-<ion-content [fullscreen]="true" color="light">
+<!-- contenedor de morosos activo he inactivos  rolMorosos-->
+<ion-content [fullscreen]="true" color="light" *ngIf="rolMorosos">
   <ion-item-group>
 
     <ion-item>
@@ -67,31 +67,62 @@
       <ion-input type="number" [(ngModel)]="lectura"></ion-input>
     </ion-item>
 
+    <!-- actividad por qr  -->
     <ion-item *ngIf="ocultarSelectActividad">
-      <ion-label class="labelDatos">Actividad</ion-label>
+      <ion-label class="labelDatos">Actividad </ion-label>
       <ion-select interface="action-sheet" [(ngModel)]="selectedActividad" (ionChange)="onActividadSelect($event)">
         <ion-select-option [value]="selectedActividad">{{descActividad}}</ion-select-option>
       </ion-select>
     </ion-item>
 
+
+
+    <!-- actividades del intervension 3 y 4 -->
     <ion-item *ngIf="!ocultarSelectActividad">
-      <ion-label class="labelDatos">Actividades</ion-label>
+      <ion-label class="labelDatos">Actividades </ion-label>
       <ion-select interface="action-sheet" [(ngModel)]="selectedActividad" (ionChange)="onActividadSelect($event)">
         <ion-select-option *ngFor="let actividad of listaActividades"
           [value]="actividad.id">{{actividad.descripcion}}</ion-select-option>
       </ion-select>
     </ion-item>
 
+    <!-- estado de la visita  -->
+
+    <ion-item *ngIf="!ocultarSelectActividad">
+      <ion-label class="labelDatos">Estado de la visita </ion-label>
+      <ion-select interface="action-sheet" [(ngModel)]="selectedEstadoVisita" (ionChange)="onEstadoVisitaSelect($event)">
+        <ion-select-option *ngFor="let estadoVisita of listaEstadosVisita"
+          [value]="estadoVisita.id">{{estadoVisita.descripcion}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label class="labelDatos">N° notificación</ion-label>
+      <ion-textarea type="text" [(ngModel)]="numNotificacion"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-label class="labelDatos">N° Compromiso pago</ion-label>
+      <ion-textarea type="text" [(ngModel)]="numCompromiso"></ion-textarea>
+    </ion-item>
+
     <ion-item>
       <ion-label class="labelDatos">Observación</ion-label>
       <ion-textarea [autoGrow]="true" placeholder="Digite observación" [(ngModel)]="observacion"></ion-textarea>
     </ion-item>
+
+    <ion-item>
+      <ion-label>Mantener datos al guardar</ion-label>
+      <ion-toggle [checked]="mantenerDatos" (ionChange)="togleMantenerDatos()"></ion-toggle>
+    </ion-item>
   </ion-item-group>
   <ion-grid>
     <ion-row>
-      <ion-col></ion-col>
+      <ion-col>
+        <ion-fab-button (click)="guardarActividad()">
+          <ion-icon name="save-outline"></ion-icon>
+        </ion-fab-button>
+      </ion-col>
       <ion-col size="auto">
-
+        <!-- boton de camara  -->
         <ion-fab-button (click)="addPhotoToGallery()">
           <ion-icon name="camera"></ion-icon>
         </ion-fab-button>
@@ -105,6 +136,12 @@
       <ion-img [src]="photo.webviewPath"></ion-img>
     </ion-col>
   </ion-row>
+  <ion-row>
+    <ion-col size="6" *ngFor="let photo of images index as position">
+      <ion-img [src]="photo"></ion-img>
+    </ion-col>
+  </ion-row>
+  <!-- En tu archivo de plantilla HTML -->
 
 
   <!-- botones flotantes  -->
@@ -133,14 +170,18 @@
           <ion-icon name="save-outline" (click)="guardarActividad()"></ion-icon>
         </ion-fab-button>
       </div>
-      <!-- <div>
-      <span class="fab-avance">Avance</span>
-    <ion-fab-button size="small" (click)="avanceNotificacion()">
-      <ion-icon name="document-text-outline"></ion-icon>
-    </ion-fab-button>
-  </div> -->
+      <div class="separcion_btn_float">
+        <span class="fab-avance">Subir Foto</span>
+        <ion-fab-button size="large" (click)="pickImages()">
+          <ion-icon name="images-outline"></ion-icon>
+        </ion-fab-button>
+      </div>
 
     </ion-fab-list>
   </ion-fab>
   <!-- <div style="height: 300px;" id="mapId"></div> -->
+</ion-content>
+<!-- ficha catastral rolConsumo -->
+<ion-content *ngIf="rolConsumo">
+  <app-explore-container></app-explore-container>
 </ion-content>

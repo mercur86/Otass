@@ -54,6 +54,14 @@ export class ApiService {
     return this.http.post(apiURL, formData, { headers: headers });
 }
   
+postFormData(path: string, formData: FormData) {
+  let apiURL = path;
+  const headers = new HttpHeaders({
+    'Accept': 'application/json, text/plain, */*'
+    
+  });
+  return this.http.post(apiURL, formData, { headers: headers });
+}
   deleteDato(path: string) {
     let apiURL = `${this.apiRoot}${path}`;
     return this.http.delete(apiURL, { headers: this.headers });

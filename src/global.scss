@@ -24,3 +24,28 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+.my-custom-class{
+  --background:#5e6266;
+  --backdrop-opacity:0.6;
+  }
+  .my-custom-class .alert-title{
+    color:#068FFF;
+  }
+  .my-custom-class .alert-sub-title{
+    color:#1c5511 !important;
+  }
+  .my-custom-class .alert-message{
+    color:#4CAF50 !important;
+  }
+
+  .alert-danger-class{
+    --background:#5e6266;
+    --backdrop-opacity:0.6;
+  }
+
+  .alert-danger-class  .alert-title{
+    color:#068FFF;
+  }
+  .alert-danger-class .alert-message{
+    color:#e0e02b !important;
+  }
