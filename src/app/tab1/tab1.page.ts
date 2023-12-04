@@ -38,7 +38,7 @@ export class Tab1Page {
   }
   public login() {
     //this.router.navigate(['tabs/tab4']);
-    this.utils.loader();
+   // this.utils.loader();
     this.http.get<any>(environment.ROOTAPI + 'iniciarSesionSisgeco.htm?id=' + this.username + '&contrasena=' + this.password + '&versionApp=' + environment.VERSIONAPP)
       .subscribe({
         next: response => {
@@ -63,7 +63,7 @@ export class Tab1Page {
               localStorage.setItem('nombreUser', nombre);
               localStorage.setItem('rol', 'MOROSOS');
               this.router.navigate(['tabs/tab4']);
-              this.utils.closeLoader();
+             // this.utils.closeLoader();
               this.observacion = response.mensaje;
             } else if (jsonData.idProyectoOtass == 4 ) {
               this.idProvincia = response.idProvinciaAcceso;
@@ -81,7 +81,7 @@ export class Tab1Page {
               localStorage.setItem('nombreUser', nombre);
               localStorage.setItem('rol', 'CONSUMO');
               this.router.navigate(['tabs/tab4']);
-              this.utils.closeLoader();
+             // this.utils.closeLoader();
               this.observacion = response.mensaje;
             }
 
@@ -116,7 +116,7 @@ export class Tab1Page {
             }
             
             this.utils.mostrarToast(response.mensaje, 3000, 'danger');
-            this.utils.closeLoader();
+            //this.utils.closeLoader();
             this.tipoMovimiento = 2;
 
             console.log(JSON.stringify(response.mensaje));
@@ -124,20 +124,20 @@ export class Tab1Page {
           } else if (response.id == 3) { // respuesta de excepcion controlada
             this.observacion = response.mensaje;
             this.utils.mostrarToast('ERROR AL LOGUEAR', 3000, 'danger');
-            this.utils.closeLoader();
+           // this.utils.closeLoader();
             this.tipoMovimiento = 2;
             console.log(JSON.stringify(response.mensaje));
           }
         },
         error: error => {
           this.utils.mostrarToast(JSON.stringify(error), 2000, 'danger');
-          this.utils.closeLoader();
+          //this.utils.closeLoader();
           console.error(error);
           console.log(JSON.stringify(error));
         },
         complete: async () => {
           console.log('Solicitud completada. login');
-          this.utils.closeLoader();
+          //this.utils.closeLoader();
           const logMovimientos = {
             idUs: this.idUs,
             tipoMovimiento: this.tipoMovimiento,

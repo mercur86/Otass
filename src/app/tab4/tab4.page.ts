@@ -223,7 +223,7 @@ export class Tab4Page implements OnInit {
 
         } else if (error) {
           console.error('Error al obtener las coordenadas GPS:', error);
-          this.utils.mostrarToast('Error al obtener las coordenadas GPS ', 5000, 'danger');
+         // this.utils.mostrarToast('Error al obtener las coordenadas GPS ', 5000, 'danger');
         }
       });
     } catch (error) {
