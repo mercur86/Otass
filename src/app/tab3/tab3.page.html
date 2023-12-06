@@ -14,16 +14,23 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <br>
-<ion-searchbar [debounce]="1000"  (ionInput)="buscadorListaAvances($event)"  ></ion-searchbar>
-
+  <div style="position: sticky; top: 0; z-index: 999;">
+    <ion-searchbar [debounce]="1000" (ionInput)="buscadorListaAvances($event)"></ion-searchbar>
+    <ion-item>
+      <ion-label>TOTAL: {{ListaAvance.length}}</ion-label>
+      <ion-label>EN PANTALLA: {{results.length}}</ion-label>
+    </ion-item>
+  </div>
   <ion-list  [inset]="true" *ngIf="mostrarAvance"  >
-    <ion-item-sliding  *ngFor="let listaAvance of results ; let index">
-    <ion-item  >
+    <ion-item-sliding  *ngFor="let listaAvance of results ; let  index  ">
+     
+    <ion-item detail="true" (click)="setOpen(true, listaAvance.url,index.latitud,index.longitud)" >
       <ion-label>
-        <h1>Suministro: {{ listaAvance.numInscripcion }}</h1>
-        <p class="saltoLine">Actividad: {{ listaAvance.actividad }}<p></p>
+        <h1  [ngStyle]="{ color: listaAvance.url.length == 0 ? '' : 'green' }">#{{index.id}} Suministro: {{ listaAvance.numInscripcion }}</h1>
+        <p class="saltoLine">Actividad: {{ listaAvance.actividad }}</p>
         <p>Fecha:{{ listaAvance.fecha }}<p>
-        <!-- <p>Nombre:{{ listaAvance.nombreCompleto }}<p></p>  -->
+        <p>DNI:{{ listaAvance.idPersona }}<p>
+        <p>Nombre:{{ listaAvance.nombreCompleto }}</p> 
       </ion-label>
     </ion-item>
     <ion-item-options>
@@ -34,7 +41,38 @@
   <ion-infinite-scroll (ionInfinite)="loadMoreData($event)" *ngIf="mostrarAvance">
     <ion-infinite-scroll-content loadingText="Cargando más elementos..."></ion-infinite-scroll-content>
   </ion-infinite-scroll>
- 
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" >
+    <ion-fab-button>
+      <ion-icon name="download-outline" (click)="generarExcel()"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+<!-- modal detalle -->
+  <ion-modal [isOpen]="isModalOpen">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>DETALLE</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="setOpen(false,'','','')">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-button expand="block" (click)="irAubicacion()">Ir a ubicacion </ion-button>
+        <ion-grid>
+          <ion-row>
+            <div id="map"></div>
+          </ion-row>
+          <ion-row>
+            <ion-col size="6" *ngFor="let urls of listaUrls; index as position">
+              <ion-img [src]="urls"></ion-img>
+            </ion-col>
+
+          </ion-row>
+        </ion-grid>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
 
   

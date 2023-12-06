@@ -24,6 +24,7 @@ export class Tab1Page {
   informacionDispositiboMovil: InformacionDispositiboMovil;
   observacion: any = '';
   urlDescargaApp: string;
+  versionApp:string;
   constructor(private http: HttpClient,
     private router: Router,
     public navCtrl: NavController,
@@ -35,6 +36,7 @@ export class Tab1Page {
   }
   async ionViewDidEnter() {
     await this.logDeviceInfo();
+    this.versionApp= environment.VERSIONAPP
   }
   public login() {
     //this.router.navigate(['tabs/tab4']);

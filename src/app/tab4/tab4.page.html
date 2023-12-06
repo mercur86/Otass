@@ -11,16 +11,17 @@
     <ion-item>
       <ion-grid>
         <ion-row>
-          <ion-col size="10"><ion-searchbar style="margin-top: 2%;" type="number" [debounce]="1000"
+          <ion-col ><ion-searchbar style="margin-top: 2%;" type="number" [debounce]="1000"
               (ionInput)="buscar($event)" placeholder="Digite suministro"
-              [(ngModel)]="suministro"></ion-searchbar></ion-col>
-          <ion-col>
+              [(ngModel)]="suministro"></ion-searchbar>
+          </ion-col>
+          <!-- <ion-col>
             <ion-fab style="margin-top: 10%;">
               <ion-fab-button size="small" (click)="scan()">
                 <ion-icon name="qr-code"></ion-icon>
               </ion-fab-button>
             </ion-fab>
-          </ion-col>
+          </ion-col> -->
         </ion-row>
       </ion-grid>
 
@@ -97,13 +98,16 @@
     </ion-item>
     <ion-item>
       <ion-label class="labelDatos">N° notificación</ion-label>
-      <ion-textarea type="text" [(ngModel)]="numNotificacion"></ion-textarea>
+      <ion-textarea type="number" [(ngModel)]="numNotificacion" inputmode="numeric"></ion-textarea>
     </ion-item>
     <ion-item>
       <ion-label class="labelDatos">N° Compromiso pago</ion-label>
-      <ion-textarea type="text" [(ngModel)]="numCompromiso"></ion-textarea>
+      <ion-textarea type="number" [(ngModel)]="numCompromiso" inputmode="numeric"></ion-textarea>
     </ion-item>
-
+    <ion-item>
+      <ion-label class="labelDatos">N° de papeleta</ion-label>
+      <ion-textarea type="number" [(ngModel)]="numPapeleta" inputmode="numeric"></ion-textarea>
+    </ion-item>
     <ion-item>
       <ion-label class="labelDatos">Observación</ion-label>
       <ion-textarea [autoGrow]="true" placeholder="Digite observación" [(ngModel)]="observacion"></ion-textarea>
@@ -134,11 +138,13 @@
   <ion-row>
     <ion-col size="6" *ngFor="let photo of photoService.photos; index as position">
       <ion-img [src]="photo.webviewPath"></ion-img>
+      <ion-button  size="small" fill="clear" (click)="eliminarFoto(position)">Eliminar</ion-button>
     </ion-col>
   </ion-row>
   <ion-row>
     <ion-col size="6" *ngFor="let photo of images index as position">
       <ion-img [src]="photo"></ion-img>
+      <ion-button  size="small" fill="clear" (click)="eliminarFoto(position)">Eliminar</ion-button>
     </ion-col>
   </ion-row>
   <!-- En tu archivo de plantilla HTML -->

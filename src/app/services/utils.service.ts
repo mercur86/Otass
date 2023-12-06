@@ -117,5 +117,12 @@ export class UtilServices {
         res.setDate(res.getDate() + days);
         return res;
     }
+
+       /**
+     * cadena a fecha con formatp /".
+     * @param {String}  fechaStr fecha iniciaal
+     * @returns {Date} La fecha 
+     */
+ 
   
 }

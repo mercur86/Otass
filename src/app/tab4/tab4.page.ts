@@ -35,16 +35,17 @@ export class Tab4Page implements OnInit {
   suministro?: any;
   nombre?: any = '';
   direccion?: any;
-  latitud?: any=0;
-  longitud?: any=0;
+  latitud?: any;
+  longitud?: any;
   observacion: string = '';
   sgrabar?= false;
   idUs?: any;
   listaActividades: Actividades[] = [];
   listaEstadosVisita: EstadosVisita[] = [];
   lectura: number = 0;
-  numNotificacion: number;
-  numCompromiso: number;
+  numNotificacion: any;
+  numCompromiso: any;
+  numPapeleta:any;
   ultimaLectura: any;
   selectedActividad: any;
   selectedEstadoVisita: any;
@@ -184,6 +185,7 @@ export class Tab4Page implements OnInit {
       this.sgrabar = true;
       const files = await this.convertPhotosToFiles();
       this.filesFotosCamara = files;
+      console.log(this.filesFotosCamara);
       this.bas64 = await this.convertFilesToBase64(files);
 
     }
@@ -250,14 +252,20 @@ export class Tab4Page implements OnInit {
   async guardar(fotos: any) {
     console.log('tamaño de array fotos al guardar');
     console.log(fotos.length);
-    var numNot = -1;
-    var numComp = -1;
+    var numNot = '';
+    var numComp = '';
+    var numPape='';
     if (this.numNotificacion) {
       numNot = this.numNotificacion
     }
 
     if (this.numCompromiso) {
       numComp = this.numCompromiso
+
+    }
+
+    if (this.numPapeleta) {
+      numPape = this.numPapeleta
 
     }
 
@@ -280,6 +288,7 @@ export class Tab4Page implements OnInit {
             formData.append('lectura', this.lectura.toString());
             formData.append('numNotificacion', numNot.toString());
             formData.append('numCompromisoPago', numComp.toString());
+            formData.append('numPapeleta', numPape.toString());
             formData.append('flagUsoQr', this.flagQR.toString());
             formData.append('observacion', this.observacion);
 
@@ -386,6 +395,9 @@ export class Tab4Page implements OnInit {
     this.images = [];
     this.filesFotosGalery = [];
     this.isPhotoGallery = false;
+    this.numCompromiso='',
+    this.numNotificacion='',
+    this.numPapeleta=''
 
   }
 
@@ -597,7 +609,7 @@ export class Tab4Page implements OnInit {
   isPhotoGallery = false;
 
   async pickImages() {
-
+    this.filesFotosGalery = [];
     const result = await FilePicker.pickImages({
       multiple: true,
       readData: true
@@ -609,21 +621,14 @@ export class Tab4Page implements OnInit {
       // Agregar al array
       this.images.push(base64); // este array se muestra en el frond
       // Convertir los base64 a Files 
-      if (this.images[0]) {
-        const file = this.convertBase64ToFile(this.images[0]);
+      this.filesFotosGalery = [];
+
+      // Recorrer la lista images para crear nuevos elementos File
+      this.images.forEach(base64 => {
+        const file = this.convertBase64ToFile(base64);
         this.filesFotosGalery.push(file);
-      }
-      if (this.images[1]) {
-        const file1 = this.convertBase64ToFile(this.images[1]);
-        this.filesFotosGalery.push(file1);
-      }
-      if (this.images[2]) {
-        const file2 = this.convertBase64ToFile(this.images[2]);
-        this.filesFotosGalery.push(file2);
-      }
-
-      console.log(this.filesFotosGalery);
-
+        console.log(this.filesFotosGalery);
+      });
 
 
     });
@@ -654,10 +659,33 @@ export class Tab4Page implements OnInit {
 
     // Crear File
     const blob = new Blob([int8Array], { type: 'image/jpeg' });
-    const file = new File([blob], new Date().getTime() + 'image.jpg', { type: 'image/jpeg' });
+    const file = new File([blob], new Date().getTime() + 'image', { type: 'image/jpeg' });
 
     return file;
 
   }
+
+  eliminarFoto(index: any) {
+    console.log(index);
+    if (index >= 0 && index < this.images.length) {
+      this.images.splice(index, 1);
+      // Aquí realizas cualquier otra lógica que necesites después de eliminar la foto
+    }
+    if (index >= 0 && index < this.photoService.photos.length) {
+      this.photoService.photos.splice(index, 1);
+      // Aquí realizas cualquier otra lógica que necesites después de eliminar la foto
+    }
+
+    this.filesFotosGalery = [];
+
+    // Recorrer la lista images para crear nuevos elementos File
+    this.images.forEach(base64 => {
+      const file = this.convertBase64ToFile(base64);
+      this.filesFotosGalery.push(file);
+      console.log(this.filesFotosCamara);
+
+    });
+  }
+
 }
 
