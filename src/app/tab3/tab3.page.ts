@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
 import { UtilServices } from '../services/utils.service';
 import { Avance } from '../entidades/Avance';
 import { environment } from 'src/environments/environment.prod';
-import { Directory, Filesystem } from '@capacitor/filesystem';
 import * as XLSX from 'xlsx';
 import { Browser } from '@capacitor/browser';
 @Component({
@@ -143,7 +142,8 @@ export class Tab3Page {
           if (response.id == '1') {
             this.utils.mostrarToast(response.mensaje, 1000, 'success');
             //this.listarAvance(this.dni);
-            this.results.splice(index, 1)
+            //this.results.splice(index.id, 1)
+            this.listarAvance(this.dni);
           } else {
             this.utils.mostrarToast('ERROR AL ELIMINAR: ' + response.mensaje, 1000, 'danger');
           }
@@ -172,6 +172,7 @@ export class Tab3Page {
   }
 
   async generarExcel() {
+    console.log(this.ListaAvance);
    
     // Verificar si hay datos para generar el Excel
     if (this.ListaAvance.length === 0) {
