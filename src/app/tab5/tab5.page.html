@@ -6,16 +6,18 @@
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
-  <ion-grid>
-    <ion-row>
+  <!-- <ion-grid>
+    
       <ion-item>
-       <h3>SUMINISTRO: {{suminsitro}}</h3> 
+        <ion-searchbar style="margin-top: 2%;" type="number" [debounce]="500"
+              (ionInput)="buscar($event)" placeholder="Digite suministro"
+              [(ngModel)]="suminsitro"></ion-searchbar>
        </ion-item>
-    </ion-row>
-  </ion-grid>
+    
+  </ion-grid> -->
  
   <ion-item>
-    <ion-label  >MONTO</ion-label>
+    <ion-label>DEUDA</ion-label>
     <ion-input type="number" [(ngModel)]="monto"  ></ion-input>
   </ion-item>
   <ion-item>

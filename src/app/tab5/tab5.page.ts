@@ -19,8 +19,10 @@ export class Tab5Page {
   mostrarCardCalcular = false;
   tasa: number;
   listaSimulacionDeuda: any;
-  idUs:any;
-  nombreUser:any;
+  idUs: any;
+  nombreUser: any;
+  countdown:string=';'
+  private countdownInterval: any;
   constructor(private router: Router, public navCtrl: NavController, private http: HttpClient, private utils: UtilServices) { }
 
   ngOnInit() {
@@ -34,11 +36,45 @@ export class Tab5Page {
     this.suminsitro = localStorage.getItem('suministro');
     this.monto = parseFloat('' + localStorage.getItem('montoDeuda'));
     console.log(this.monto);
+    this.startCountdown();
   }
-  ionViewWillLeave() {
+  
 
+  startCountdown() {
+    let timeLeft = environment.TIMESESION; // Tiempo en segundos
+    clearInterval(this.countdownInterval); // Borra el intervalo previo, si existe
+  
+    this.countdownInterval = setInterval(() => {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      this.countdown = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      timeLeft--;
+  
+     // console.log(this.countdown);
+  
+      if (timeLeft < 0) {
+        clearInterval(this.countdownInterval);
+        // Realiza la acción deseada al finalizar el contador
+        this.router.navigate(['/tab1']);
+      }
+    }, 1000);
   }
- 
+  
+  // Método que puedes llamar para restablecer el contador desde otros métodos
+  resetCountdown() {
+    clearInterval(this.countdownInterval); // Borra el intervalo actual
+    this.startCountdown(); // Inicia un nuevo contador
+  }
+
+  stopCountdown() {
+    clearInterval(this.countdownInterval); // Detiene el intervalo actual
+    // Puedes realizar alguna acción adicional si es necesario al detener el contador
+    console.log('Contador detenido');
+  }
+
+  ionViewDidLeave() {// se ejecuta al salir del componente
+    this.stopCountdown();
+  }
   calcularNumCuotasConvenio_SISGECO(montoAPlazo: number, cuotaFija: number, tasa: number): number {
     let numCuotas: number;
     if (tasa > 0) {
@@ -65,6 +101,7 @@ export class Tab5Page {
     return cuotaFija;
   }
   calcularSimulacion() {
+    this.resetCountdown();
     this.saldoFinanciar = parseFloat((this.monto - this.cuotaInicial).toFixed(2));
     if (this.numeroCuotas > 0) {
       this.montoCantidadFija = parseFloat(this.calcularCuotaFijaConvenio_SISGECO(this.saldoFinanciar, this.numeroCuotas, this.tasa).toFixed(2));
@@ -76,9 +113,9 @@ export class Tab5Page {
     if (this.cuotaInicial) {
 
       this.mostrarCardCalcular = true;
-      this.http.post<any>(environment.ROOTAPI +'generarSimulacionCuotasConvenio/' + this.idUs+'/'+this.nombreUser+'/'+ this.cuotaInicial + '/' + this.saldoFinanciar + '/' + this.numeroCuotas + '/' + this.tasa + '/' + this.montoCantidadFija +'.htm', {})
+      this.http.post<any>(environment.ROOTAPI + 'generarSimulacionCuotasConvenio/' + this.idUs + '/' + this.nombreUser + '/' + this.cuotaInicial + '/' + this.saldoFinanciar + '/' + this.numeroCuotas + '/' + this.tasa + '/' + this.montoCantidadFija + '.htm', {})
         .subscribe({
-          next:response => {
+          next: response => {
             if (response.id == '1') {
               console.log(response);
               this.listaSimulacionDeuda = JSON.parse(response.data)
@@ -87,18 +124,18 @@ export class Tab5Page {
             } else if (response.id == '2' || response.id == '3') {
               this.utils.mostrarToast(JSON.stringify(response.mensaje), 5000, 'danger');
 
-            } 
+            }
 
           },
-          error:error => {
+          error: error => {
             console.error(error);
             this.utils.mostrarToast(JSON.stringify(error), 5000, 'danger');
 
           },
-          complete:()=> {
-              console.log('consumo completado');
+          complete: () => {
+            console.log('consumo completado');
           }
-         } );
+        });
     } else {
       this.utils.mostrarToast('Ingresar cuota inicial', 1000, 'warning')
     }
@@ -117,12 +154,24 @@ export class Tab5Page {
   }
 
   limpiar() {
+    this.resetCountdown();
     this.numeroCuotas = NaN;
     this.montoCantidadFija = NaN;
     this.saldoFinanciar = NaN;
     this.cuotaInicial = NaN;
     this.listaSimulacionDeuda = [];
     this.mostrarCardCalcular = false;
+  }
+
+  buscar(event: any) {
+    const query = parseInt(event.target.value, 10);
+    if (query) {
+      this.calcularSimulacion();
+    } else {
+      this.listaSimulacionDeuda = [];
+
+    }
+
   }
 
 }

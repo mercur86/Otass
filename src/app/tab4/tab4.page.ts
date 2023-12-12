@@ -78,6 +78,8 @@ export class Tab4Page implements OnInit {
   public photos: UserPhoto[] = [];
   filesFotosCamara: File[] = [];
   filesFotosGalery: File[] = [];
+
+  private countdownInterval: any;
   constructor(
     private http: HttpClient,
     public photoService: PhotoService,
@@ -102,6 +104,7 @@ export class Tab4Page implements OnInit {
 
 
   async ionViewDidEnter() {
+    this.startCountdown();
     this.rol = localStorage.getItem('rol');
     if (this.rol == 'MOROSOS') {
       this.rolMorosos = true;
@@ -128,10 +131,45 @@ export class Tab4Page implements OnInit {
       this.listaEstadosVisita = JSON.parse(estadoVisita);
       // Hacer algo con los datos almacenados en el array 'impedimentosArray'
     }
+    
+  }
+  
+
+  countdown: string = '';
+  startCountdown() {
+    let timeLeft = environment.TIMESESION; // Tiempo en segundos
+    clearInterval(this.countdownInterval); // Borra el intervalo previo, si existe
+  
+    this.countdownInterval = setInterval(() => {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      this.countdown = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      timeLeft--;
+  
+      //console.log(this.countdown);
+  
+      if (timeLeft < 0) {
+        clearInterval(this.countdownInterval);
+        // Realiza la acción deseada al finalizar el contador
+        this.router.navigate(['/tab1']);
+      }
+    }, 1000);
+  }
+  
+  // Método que puedes llamar para restablecer el contador desde otros métodos
+  resetCountdown() {
+    clearInterval(this.countdownInterval); // Borra el intervalo actual
+    this.startCountdown(); // Inicia un nuevo contador
+  }
+
+  stopCountdown() {
+    clearInterval(this.countdownInterval); // Detiene el intervalo actual
+    // Puedes realizar alguna acción adicional si es necesario al detener el contador
+    console.log('Contador detenido');
   }
 
   ionViewDidLeave() {// se ejecuta al salir del componente
-
+    this.stopCountdown();
   }
   isGoogleBarcodeScannerModuleAvailable = async () => {
     const { available } =
@@ -178,6 +216,7 @@ export class Tab4Page implements OnInit {
   }
 
   async addPhotoToGallery() {
+    this.startCountdown();
     //this.photoService.addNewToGallery();
     //this.obtenerCoordenadasGPS();
     if (await this.photoService.addNewToGallery()) {
@@ -236,7 +275,7 @@ export class Tab4Page implements OnInit {
 
 
   async guardarActividad() {
-
+    this.resetCountdown();// restablece contador para cerrar sesion
 
     if (this.isPhotoGallery) {
       console.log('entro a fotos de galeria');
@@ -372,6 +411,7 @@ export class Tab4Page implements OnInit {
   }
 
   limpiar() {
+    this.resetCountdown();
     console.log("ingreso a limpiar");
     // Establecer todas las variables utilizadas en los campos en blanco
     this.suministro = '';
@@ -474,6 +514,7 @@ export class Tab4Page implements OnInit {
   }
 
   public async buscar(event: any) {
+    this.resetCountdown();
     const query = parseInt(event.target.value, 10); // El segundo argumento (10) especifica la base numérica (decimal).
     if (!isNaN(query)) {
       this.suministro = query;
@@ -563,15 +604,17 @@ export class Tab4Page implements OnInit {
 
   }
   onActividadSelect(event: any) {
+    this.resetCountdown();
     console.log(event);//realizar una accion al seleccionar un select 
   }
   onEstadoVisitaSelect(event: any) {
+    this.resetCountdown();
     console.log(event);//realizar una accion al seleccionar un select 
   }
 
 
   togleMantenerDatos() {
-
+    this.resetCountdown();
     // Puedes hacer lo que desees con this.toggleValue, como enviarlo a una API o realizar otras acciones.
     this.mantenerDatos = !this.mantenerDatos;
     console.log('Valor del toggle:', this.mantenerDatos);
@@ -609,6 +652,7 @@ export class Tab4Page implements OnInit {
   isPhotoGallery = false;
 
   async pickImages() {
+    this.resetCountdown();
     this.filesFotosGalery = [];
     const result = await FilePicker.pickImages({
       multiple: true,
@@ -666,6 +710,7 @@ export class Tab4Page implements OnInit {
   }
 
   eliminarFoto(index: any) {
+    this.resetCountdown();
     console.log(index);
     if (index >= 0 && index < this.images.length) {
       this.images.splice(index, 1);
@@ -686,6 +731,7 @@ export class Tab4Page implements OnInit {
 
     });
   }
+
 
 }
 

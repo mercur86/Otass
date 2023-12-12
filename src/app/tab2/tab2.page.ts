@@ -18,6 +18,8 @@ export class Tab2Page {
   lastIndexToShow = 15;
   listaCuentaCorriente: any[] = [];
   results:any[] = [];
+  countdown:string='';
+  private countdownInterval: any;
   constructor(private router: Router,
     public navCtrl: NavController,
     private http: HttpClient,
@@ -27,18 +29,54 @@ export class Tab2Page {
   ngOnInit() {
     
   }
+  
 
   ionViewWillEnter() {
     this.suminsitro = localStorage.getItem('suministro');
     this.nombreUser = localStorage.getItem('nombreUser');
     this.idUs = localStorage.getItem('idUsuario');
     this.cuentaCorriente();
+    this.startCountdown();
   }
   ionViewDidLeave(){
+    this.stopCountdown();
     console.log('usame');
     this.listaCuentaCorriente=[];
     this.results=[];
     //this.suminsitro = localStorage.removeItem('suministro');
+  }
+
+
+
+  startCountdown() {
+    let timeLeft = environment.TIMESESION; // Tiempo en segundos
+    clearInterval(this.countdownInterval); // Borra el intervalo previo, si existe
+  
+    this.countdownInterval = setInterval(() => {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      this.countdown = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      timeLeft--;
+  
+      //console.log(this.countdown);
+  
+      if (timeLeft < 0) {
+        clearInterval(this.countdownInterval);
+        // Realiza la acción deseada al finalizar el contador
+        this.router.navigate(['/tab1']);
+      }
+    }, 1000);
+  }
+  
+  // Método que puedes llamar para restablecer el contador desde otros métodos
+  resetCountdown() {
+    clearInterval(this.countdownInterval); // Borra el intervalo actual
+    this.startCountdown(); // Inicia un nuevo contador
+  }
+  stopCountdown() {
+    clearInterval(this.countdownInterval); // Detiene el intervalo actual
+    // Puedes realizar alguna acción adicional si es necesario al detener el contador
+    console.log('Contador detenido');
   }
   cuentaCorriente() {
     //this.utils.loader();
@@ -94,7 +132,7 @@ export class Tab2Page {
   }
 
   loadMoreData(event?: any) {
-
+   this.resetCountdown();
     // Verifica si hay más elementos para mostrar
     if (this.lastIndexToShow < this.listaCuentaCorriente.length) {
       // Incrementa el índice para mostrar los siguientes 5 elementos
@@ -115,11 +153,6 @@ export class Tab2Page {
 
   }
 
-
-  regresarTologin() {
-    this.navCtrl.navigateBack('/tab1'); // este es el tab 1 del lecturista 
-  }
-
   handleRefresh(event: any) {
     setTimeout(() => {
       this.suminsitro = localStorage.getItem('suministro');
@@ -127,5 +160,15 @@ export class Tab2Page {
       event.target.complete();
     }, 2000);
   }
-
+  buscar(event: any){
+    this.resetCountdown();
+    const query = parseInt(event.target.value, 10);
+    if(query){
+      this.cuentaCorriente();
+    }else{
+      this.results=[];
+     
+    }
+    
+  }
 }

@@ -15,7 +15,9 @@
   </ion-refresher>
        
   <ion-item>
-    SUMINISTRO: {{suminsitro}}
+    <ion-searchbar style="margin-top: 2%;" type="number" [debounce]="500"
+              (ionInput)="buscar($event)" placeholder="Digite suministro"
+              [(ngModel)]="suminsitro"></ion-searchbar>
    </ion-item>
     <ion-item class="fixed-header" >
     <ion-grid  [fixed]="true" >

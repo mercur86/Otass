@@ -15,10 +15,15 @@
   </ion-refresher>
   <br>
   <div style="position: sticky; top: 0; z-index: 999;">
-    <ion-searchbar [debounce]="1000" (ionInput)="buscadorListaAvances($event)"></ion-searchbar>
+    <ion-item>
+      <ion-searchbar [debounce]="1000" (ionInput)="buscadorListaAvances($event)"></ion-searchbar> 
+      <!-- <ion-button id="open-modal" expand="block"><ion-icon name="filter-outline"></ion-icon></ion-button> -->
+      <!-- <ion-button (click)="obtenerDniFiltro()"><ion-icon name="filter-circle-outline"></ion-icon></ion-button> -->
+   
+    </ion-item>
     <ion-item>
       <ion-label>TOTAL: {{ListaAvance.length}}</ion-label>
-      <ion-label>EN PANTALLA: {{results.length}}</ion-label>
+      <ion-label>FILTRADOS: {{resultsAux.length}}</ion-label>
     </ion-item>
   </div>
   <ion-list  [inset]="true" *ngIf="mostrarAvance"  >
@@ -70,6 +75,35 @@
 
           </ion-row>
         </ion-grid>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- MODAL DE FILTRO AVANZADO -->
+
+  <ion-modal #modal trigger="open-modal">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Modal</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="modal.dismiss()">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+          <ion-item>
+              <ion-label>DNI</ion-label> <ion-input type="number"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label>FECHA INICIO</ion-label> <ion-input type="date"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>FICHA FIN</ion-label> <ion-input type="date"></ion-input>
+      </ion-item>
+      <ion-item lines="none">
+          <ion-button>FILTRAR</ion-button>
+      </ion-item>
       </ion-content>
     </ng-template>
   </ion-modal>
