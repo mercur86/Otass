@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { PhotoService, UserPhoto } from '../services/photo.service';
 import { Geolocation } from '@capacitor/geolocation';
 import { Router } from '@angular/router';
@@ -86,7 +86,8 @@ export class Tab4Page implements OnInit {
     public alertController: AlertController,
     private router: Router,
     private api: ApiService,
-    private utils: UtilServices) {
+    private utils: UtilServices,
+    private loading: LoadingController) {
   }
 
   async ngOnInit() {
@@ -312,8 +313,13 @@ export class Tab4Page implements OnInit {
       if (this.selectedActividad) {
         if (this.selectedEstadoVisita) {
           if (true) { // this.base64[0] aca permito que sea opcional la foto
-            this.utils.loader(); // carga el loader de espera 
-
+            //this.utils.loader(); // carga el loader de espera 
+             // Mostrar el indicador de carga
+             const loading = await this.loading.create({
+              message: 'Espere un momento...', // Mensaje que se mostrará mientras carga
+            });
+            await loading.present();
+            ////
             const formData = new FormData();
             formData.append('numInscripcion', this.suministro);
             formData.append('longitud', this.longitud);
@@ -362,7 +368,8 @@ export class Tab4Page implements OnInit {
               {
                 next: response => {
                   if (response.id == '1') {
-                    this.utils.closeLoader();
+                    //this.utils.closeLoader();
+                    loading.dismiss();
                     //this.utils.mostrarToast(response.mensaje, 1000, 'success');
                     if (this.mantenerDatos) {
                       //limpiar solo la actividad
@@ -382,12 +389,14 @@ export class Tab4Page implements OnInit {
                     this.utils.mostrarToast(response.mensaje, 5000, 'danger');
                   } else if (response.id == '3') {
                     console.error(response.mensaje);
-                    this.utils.closeLoader();
+                    //this.utils.closeLoader();
+                    loading.dismiss();
                     this.utils.mostrarToast('ERROR AL REGISTRAR', 5000, 'danger');
                   }
                 },
                 error: (error) => {
-                  this.utils.closeLoader();
+                 // this.utils.closeLoader();
+                 loading.dismiss();
                   console.error(error);
                   //this.utils.mostrarToast(JSON.stringify(error), 5000, 'danger');
                 }
