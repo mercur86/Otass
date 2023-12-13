@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { PhotoService, UserPhoto } from '../services/photo.service';
 import { Geolocation } from '@capacitor/geolocation';
 import { Router } from '@angular/router';
@@ -38,14 +38,14 @@ export class Tab4Page implements OnInit {
   latitud?: any;
   longitud?: any;
   observacion: string = '';
-  sgrabar?= false;
+  sgrabar? = false;
   idUs?: any;
   listaActividades: Actividades[] = [];
   listaEstadosVisita: EstadosVisita[] = [];
   lectura: number = 0;
   numNotificacion: any;
   numCompromiso: any;
-  numPapeleta:any;
+  numPapeleta: any;
   ultimaLectura: any;
   selectedActividad: any;
   selectedEstadoVisita: any;
@@ -78,7 +78,7 @@ export class Tab4Page implements OnInit {
   public photos: UserPhoto[] = [];
   filesFotosCamara: File[] = [];
   filesFotosGalery: File[] = [];
-
+  permisos: any;
   private countdownInterval: any;
   constructor(
     private http: HttpClient,
@@ -86,7 +86,8 @@ export class Tab4Page implements OnInit {
     public alertController: AlertController,
     private router: Router,
     private api: ApiService,
-    private utils: UtilServices) {
+    private utils: UtilServices,
+    private loading: LoadingController) {
   }
 
   async ngOnInit() {
@@ -104,6 +105,7 @@ export class Tab4Page implements OnInit {
 
 
   async ionViewDidEnter() {
+
     this.startCountdown();
     this.rol = localStorage.getItem('rol');
     if (this.rol == 'MOROSOS') {
@@ -131,23 +133,25 @@ export class Tab4Page implements OnInit {
       this.listaEstadosVisita = JSON.parse(estadoVisita);
       // Hacer algo con los datos almacenados en el array 'impedimentosArray'
     }
-    
+
+
+
   }
-  
+
 
   countdown: string = '';
   startCountdown() {
     let timeLeft = environment.TIMESESION; // Tiempo en segundos
     clearInterval(this.countdownInterval); // Borra el intervalo previo, si existe
-  
+
     this.countdownInterval = setInterval(() => {
       const minutes = Math.floor(timeLeft / 60);
       const seconds = timeLeft % 60;
       this.countdown = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
       timeLeft--;
-  
+
       //console.log(this.countdown);
-  
+
       if (timeLeft < 0) {
         clearInterval(this.countdownInterval);
         // Realiza la acción deseada al finalizar el contador
@@ -155,7 +159,7 @@ export class Tab4Page implements OnInit {
       }
     }, 1000);
   }
-  
+
   // Método que puedes llamar para restablecer el contador desde otros métodos
   resetCountdown() {
     clearInterval(this.countdownInterval); // Borra el intervalo actual
@@ -264,7 +268,7 @@ export class Tab4Page implements OnInit {
 
         } else if (error) {
           console.error('Error al obtener las coordenadas GPS:', error);
-         // this.utils.mostrarToast('Error al obtener las coordenadas GPS ', 5000, 'danger');
+          this.utils.presentAlertPersonalizadoDanger('', 'ACTIVAR GPS');
         }
       });
     } catch (error) {
@@ -272,7 +276,6 @@ export class Tab4Page implements OnInit {
       this.utils.mostrarToast('Error al obtener las coordenadas GPS ', 5000, 'danger');
     }
   }
-
 
   async guardarActividad() {
     this.resetCountdown();// restablece contador para cerrar sesion
@@ -289,11 +292,12 @@ export class Tab4Page implements OnInit {
   }
 
   async guardar(fotos: any) {
+
     console.log('tamaño de array fotos al guardar');
     console.log(fotos.length);
     var numNot = '';
     var numComp = '';
-    var numPape='';
+    var numPape = '';
     if (this.numNotificacion) {
       numNot = this.numNotificacion
     }
@@ -308,12 +312,22 @@ export class Tab4Page implements OnInit {
 
     }
 
+    if (this.latitud === undefined) {
+      alert('No se ha capturado coordenadas ');
+    }
+
     if (this.nombre) {
       if (this.selectedActividad) {
         if (this.selectedEstadoVisita) {
           if (true) { // this.base64[0] aca permito que sea opcional la foto
-            this.utils.loader(); // carga el loader de espera 
+            //this.utils.loader(); // carga el loader de espera 
 
+            // Mostrar el indicador de carga
+            const loading = await this.loading.create({
+              message: 'Espere un momento...', // Mensaje que se mostrará mientras carga
+            });
+            await loading.present();
+            ////
             const formData = new FormData();
             formData.append('numInscripcion', this.suministro);
             formData.append('longitud', this.longitud);
@@ -362,7 +376,8 @@ export class Tab4Page implements OnInit {
               {
                 next: response => {
                   if (response.id == '1') {
-                    this.utils.closeLoader();
+                   // this.utils.closeLoader();
+                   loading.dismiss();
                     //this.utils.mostrarToast(response.mensaje, 1000, 'success');
                     if (this.mantenerDatos) {
                       //limpiar solo la actividad
@@ -378,16 +393,19 @@ export class Tab4Page implements OnInit {
                     this.utils.presentAlertPersonalizado('', 'Notificado Correctamente');
                   } else if (response.id == '2') {
                     console.error(response.mensaje);
-                    this.utils.closeLoader();
+                    //this.utils.closeLoader();
+                    loading.dismiss();
                     this.utils.mostrarToast(response.mensaje, 5000, 'danger');
                   } else if (response.id == '3') {
                     console.error(response.mensaje);
-                    this.utils.closeLoader();
+                    loading.dismiss();
+                    //this.utils.closeLoader();
                     this.utils.mostrarToast('ERROR AL REGISTRAR', 5000, 'danger');
                   }
                 },
                 error: (error) => {
-                  this.utils.closeLoader();
+                  loading.dismiss();
+                 // this.utils.closeLoader();
                   console.error(error);
                   //this.utils.mostrarToast(JSON.stringify(error), 5000, 'danger');
                 }
@@ -395,12 +413,16 @@ export class Tab4Page implements OnInit {
             );
 
 
+
           } else {
             this.utils.presentAlertPersonalizado('', 'Debe tomar una foto');
           }
+
+
         } else {
           this.utils.presentAlertPersonalizadoDanger('', 'Debes seleccionar una estado de visita');
         }
+
       } else {
         this.utils.presentAlertPersonalizadoDanger('', 'Debes seleccionar una actividad');
 
@@ -435,9 +457,9 @@ export class Tab4Page implements OnInit {
     this.images = [];
     this.filesFotosGalery = [];
     this.isPhotoGallery = false;
-    this.numCompromiso='',
-    this.numNotificacion='',
-    this.numPapeleta=''
+    this.numCompromiso = '',
+      this.numNotificacion = '',
+      this.numPapeleta = ''
 
   }
 
@@ -527,6 +549,7 @@ export class Tab4Page implements OnInit {
       localStorage.removeItem('suministro');
       this.limpiar();
     }
+    this.obtenerCoordenadasGPS();
   }
 
 
