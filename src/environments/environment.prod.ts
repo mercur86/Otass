@@ -5,6 +5,6 @@ export const environment = {
    ROOTAPI:'https://sisgeco.epsgrau.pe/SISGECO/servicioWeb/',
    //ROOTAPI:'https://pruebas.epsgrau.pe/SISGECO/servicioWeb/',
   // ROOTAPI:'http://localhost:8080/SistemaComercialEPS/servicioWeb/',
-  TIMESESION:1800
+  TIMESESION:2700
 
 };
