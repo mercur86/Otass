@@ -17,29 +17,38 @@
   <div style="position: sticky; top: 0; z-index: 999;">
     <ion-item>
       <ion-searchbar [debounce]="1000" (ionInput)="buscadorListaAvances($event)"></ion-searchbar> 
-      <!-- <ion-button id="open-modal" expand="block"><ion-icon name="filter-outline"></ion-icon></ion-button> -->
+      <ion-button id="open-modal" expand="block"><ion-icon name="filter-outline"></ion-icon></ion-button>
       <!-- <ion-button (click)="obtenerDniFiltro()"><ion-icon name="filter-circle-outline"></ion-icon></ion-button> -->
-   
     </ion-item>
-    <ion-item>
+    <ion-item >
       <ion-label>TOTAL: {{ListaAvance.length}}</ion-label>
       <ion-label>FILTRADOS: {{resultsAux.length}}</ion-label>
+      <ion-button id="open-modal-archivados" expand="block" slot="end"  (click)="modalArchivados.present(); cadrgarElimidados();"><ion-icon name="trash-bin-outline"></ion-icon></ion-button>
     </ion-item>
+
   </div>
+ 
   <ion-list  [inset]="true" *ngIf="mostrarAvance"  >
     <ion-item-sliding  *ngFor="let listaAvance of results ; let  index  ">
+
+     <!-- enviando datos al modal  -->
+    <ion-item detail="true" [button]="true" (click)="setOpen(true, listaAvance.url,index.latitud,index.longitud,index.numCompromisoPago,index.numNotificacion,index.numPapeleta,index.estadoVisita,index.numInscripcion,index.idActividad,index.estadoVisita);modDet.present(); " >
      
-    <ion-item detail="true" (click)="setOpen(true, listaAvance.url,index.latitud,index.longitud)" >
       <ion-label>
-        <h1  [ngStyle]="{ color: listaAvance.url.length == 0 ? '' : 'green' }">#{{index.id}} Suministro: {{ listaAvance.numInscripcion }}</h1>
-        <p class="saltoLine">Actividad: {{ listaAvance.actividad }}</p>
-        <p>Fecha:{{ listaAvance.fecha }}<p>
-        <p>DNI:{{ listaAvance.idPersona }}<p>
-        <p>Nombre:{{ listaAvance.nombreCompleto }}</p> 
+       <div >
+         <h2 [ngStyle]="{ color: listaAvance.url.length == 0 ? '' : 'green' }"> {{index.id}} -  {{ listaAvance.numInscripcion }}     {{listaAvance.desSituacionConaguaTMomentoVisita}}</h2>
+       </div>
+        <p style="font-size: 70%;">TITULAR: {{ listaAvance.titular }}</p> 
+        <p class="saltoLine" style="font-size: 70%;">{{ listaAvance.actividad }}</p>
+        <p style="font-size: 70%;">{{listaAvance.provincia}} - {{listaAvance.distrito}}</p> 
+        <p style="font-size: 70%;" class="scrolling-text">{{listaAvance.direccion}}   <p>
+        <p style="font-size: 70%;">{{ listaAvance.fechaVisita }} <p></p>
+        <p style="font-size: 70%;">{{ listaAvance.idPersona }} - {{ listaAvance.nombreCompleto }}<p>
+        <p style="font-size: 70%;">Meses deuda: {{ listaAvance.numMesesDeudaMomentoVisita }} Total Deuda:  {{ listaAvance.montoDeudaMomentoVisita }} Saldo cc: {{ listaAvance.saldoCtaCteMomentoVisita }}<p>
       </ion-label>
     </ion-item>
     <ion-item-options>
-      <ion-item-option color="danger" (click)="eliminarAvance(listaAvance.idPadronDetalleVisita, index)">Delete</ion-item-option>
+      <ion-item-option color="danger" (click)="eliminarAvance(listaAvance.idPadronDetalleVisita, index)">Eliminar</ion-item-option>
     </ion-item-options>
     </ion-item-sliding>
   </ion-list>
@@ -52,28 +61,45 @@
     </ion-fab-button>
   </ion-fab>
 <!-- modal detalle -->
-  <ion-modal [isOpen]="isModalOpen">
+  <ion-modal #modDet   [isOpen]="isModalOpen">
     <ng-template>
       <ion-header>
         <ion-toolbar>
           <ion-title>DETALLE</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="setOpen(false,'','','')">Cerrar</ion-button>
+            <ion-button (click)="setOpen(false,'','','','','','','','','','')">Cerrar</ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
-        <ion-button expand="block" (click)="irAubicacion()">Ir a ubicacion </ion-button>
+        <ion-item>
+          <ion-label>Suministro:   {{numInscripcion}}</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-textarea label="Estado Visita: " [autoGrow]="true" value="{{estadoVisita}}" readonly="">  </ion-textarea>
+        </ion-item>
+       <ion-item>
+         <ion-label>N° Comprobante de pago:   {{numCompromisoPago}}</ion-label>
+       </ion-item>
+       <ion-item>
+        <ion-label>N° de notificación:  {{numNotificacion}}</ion-label>
+      </ion-item>
+       <ion-item>
+        <ion-label>N° de papeleta  {{numPapelata}}</ion-label>
+       </ion-item>
+       
         <ion-grid>
           <ion-row>
             <div id="map"></div>
           </ion-row>
           <ion-row>
             <ion-col size="6" *ngFor="let urls of listaUrls; index as position">
-              <ion-img [src]="urls"></ion-img>
+              <img [src]="urls" (click)="mostrarImagenAmpliada(urls) ; setOpenModalImagen(true) ; modAmpliarImg.present(); " id="imagen{{position}}">
+              <ion-button  size="small" fill="clear" (click)="descargarImagen(urls,position)" id="f" >Descargar</ion-button>
             </ion-col>
 
           </ion-row>
+          <ion-button expand="block" (click)="irAubicacion()">Ir a ubicacion </ion-button>
         </ion-grid>
       </ion-content>
     </ng-template>
@@ -81,11 +107,11 @@
 
   <!-- MODAL DE FILTRO AVANZADO -->
 
-  <ion-modal #modal trigger="open-modal">
+  <ion-modal #modal trigger="open-modal" class="modalFiltro">
     <ng-template>
       <ion-header>
         <ion-toolbar>
-          <ion-title>Modal</ion-title>
+          <ion-title>Filtro Avanzado</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="modal.dismiss()">Close</ion-button>
           </ion-buttons>
@@ -93,21 +119,101 @@
       </ion-header>
       <ion-content>
           <ion-item>
-              <ion-label>DNI</ion-label> <ion-input type="number"></ion-input>
+              <ion-label>DNI</ion-label> 
+              <ion-input type="number" [(ngModel)]="dniAvanzado" ></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label>FECHA INICIO</ion-label> <ion-input type="date"></ion-input>
+            <ion-label>Nombre</ion-label> 
+            <ion-input type="text" [(ngModel)]="nombreFiltrAvanzado" ></ion-input>
         </ion-item>
         <ion-item>
-          <ion-label>FICHA FIN</ion-label> <ion-input type="date"></ion-input>
+          <ion-select interface="action-sheet" [(ngModel)]="idEstadoVisita" label="Estado Visita">
+            <ion-select-option *ngFor="let estadoVisita of listaEstadosVisita"
+              [value]="estadoVisita.id">{{estadoVisita.descripcion}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-select interface="action-sheet" [(ngModel)]="idActividad" label ="Actividades">
+            <ion-select-option *ngFor="let actividad of listaActividades"
+              [value]="actividad.id">{{actividad.descripcion}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+          <ion-item>
+            <ion-label>Fecha Inicio</ion-label> 
+            <ion-input type="date" [(ngModel)]="fechaInicio" ></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Fecha Fin</ion-label> 
+          <ion-input type="date" [(ngModel)]="fechaFin" ></ion-input>
       </ion-item>
       <ion-item lines="none">
-          <ion-button>FILTRAR</ion-button>
+          <ion-button fill="clear" slot="start" (click)=" restaurarFiltros()">Limpiar</ion-button>
+          <ion-button fill="clear" slot="end" (click)="modal.dismiss(); filtroAvanzado()">Filtrar</ion-button>
       </ion-item>
       </ion-content>
     </ng-template>
   </ion-modal>
+
+
+ <!-- modal imagen ampliada -->
+
+ <ion-modal #modAmpliarImg [isOpen]="isImagenAmpliada"  >
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Foto</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="setOpenModalImagen(false)">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding"  class="imgModal" >
+        <ion-img [src]="urlimagenmodal"></ion-img>
+    </ion-content>
+  </ng-template>
+</ion-modal>
 </ion-content>
+
+<!-- Modal eliminados  -->
+<ion-modal #modalArchivados trigger="open-modal-archivados"  >
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Mis eliminados</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="modalArchivados.dismiss()">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding" >
+      <ion-list  [inset]="true"  >
+        <ion-item-sliding  *ngFor="let eliminados of ListaEliminados ; let  index  ">
+    
+         <!-- enviando datos al modal  -->
+        <ion-item detail="true"  >
+         
+          <ion-label>
+           <div >
+             <h2 [ngStyle]="{ color: eliminados.url.length == 0 ? '' : 'green' }"> {{index.id}} -  {{ eliminados.numInscripcion }}     {{eliminados.desSituacionConaguaTMomentoVisita}}</h2>
+           </div>
+            <p style="font-size: 70%;">TITULAR: {{ eliminados.titular }}</p> 
+            <p class="saltoLine" style="font-size: 70%;">{{ eliminados.actividad }}</p>
+            <p style="font-size: 70%;">{{eliminados.provincia}} - {{eliminados.distrito}}</p> 
+            <p style="font-size: 70%;" class="scrolling-text">{{eliminados.direccion}}   <p>
+            <p style="font-size: 70%;">{{ eliminados.fechaVisita }} <p></p>
+            <p style="font-size: 70%;">{{ eliminados.idPersona }} - {{ eliminados.nombreCompleto }}<p>
+            <p style="font-size: 70%;">Meses deuda: {{ eliminados.numMesesDeudaMomentoVisita }} Total Deuda:  {{ eliminados.montoDeudaMomentoVisita }} Saldo cc: {{ eliminados.saldoCtaCteMomentoVisita }}<p>
+          </ion-label>
+        </ion-item>
+        <ion-item-options>
+          <ion-item-option color="success" (click)="restaurarAvance(eliminados.idPadronDetalleVisita, eliminados.idPersona,eliminados.nombreCompleto)">Restaurar</ion-item-option>
+        </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
 
   
 

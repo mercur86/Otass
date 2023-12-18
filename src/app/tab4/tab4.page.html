@@ -28,28 +28,41 @@
 
     </ion-item>
     <ion-item>
-      <ion-label class="labelDatos">Provincia</ion-label>
+      <ion-label class="labelDatos">Pro. Dist. </ion-label>
       <ion-textarea [readonly]="true" [(ngModel)]="provincia"></ion-textarea>
     </ion-item>
-    <ion-item>
+    <!-- <ion-item>
       <ion-label class="labelDatos">Distrito</ion-label>
       <ion-textarea [readonly]="true" [(ngModel)]="distrito"></ion-textarea>
-    </ion-item>
-    <ion-item>
+    </ion-item> -->
+    <!-- <ion-item>
       <ion-label class="labelDatos">Cod. Cat.</ion-label>
       <ion-textarea [readonly]="true" [(ngModel)]="codCatastral"></ion-textarea>
-    </ion-item>
+    </ion-item> -->
     <ion-item>
       <ion-label class="labelDatos">Dirección</ion-label>
       <ion-textarea [readonly]="true" [(ngModel)]="direccion"></ion-textarea>
     </ion-item>
     <ion-item>
-      <ion-label class="labelDatos">Nombre</ion-label>
+      <ion-label class="labelDatos">Titular</ion-label>
       <ion-textarea type="text" [readonly]="true" [(ngModel)]="nombre"></ion-textarea>
     </ion-item>
 
+    <ion-item>
+      <ion-label class="labelDatos">Meses deuda </ion-label>
+      <ion-textarea type="text" [readonly]="true" [(ngModel)]="numMesesDeuda"></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label class="labelDatos">Total deuda</ion-label>
+      <ion-textarea type="text" [readonly]="true" [(ngModel)]="montoDeuda"></ion-textarea>
+    </ion-item>
 
 
+    <ion-item>
+      <ion-label class="labelDatos">Saldo cc </ion-label>
+      <ion-textarea type="text" [readonly]="true" [(ngModel)]="saldoCC"></ion-textarea>
+    </ion-item>
     <!-- aca para lectura de altos consumidores  -->
     <ion-item *ngIf="rolConsumo">
       <ion-label class="labelDatos">Categoría</ion-label>
@@ -113,10 +126,10 @@
       <ion-textarea [autoGrow]="true" placeholder="Digite observación" [(ngModel)]="observacion"></ion-textarea>
     </ion-item>
 
-    <ion-item>
+    <!-- <ion-item>
       <ion-label>Mantener datos al guardar</ion-label>
       <ion-toggle [checked]="mantenerDatos" (ionChange)="togleMantenerDatos()"></ion-toggle>
-    </ion-item>
+    </ion-item> -->
   </ion-item-group>
   <ion-grid>
     <ion-row>

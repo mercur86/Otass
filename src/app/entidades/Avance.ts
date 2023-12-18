@@ -1,5 +1,5 @@
 export interface Avance {
-    fecha: string;
+    fechaVisita: string;
     idPersona: string;
     latitud: string;
     longitud: string;
@@ -11,5 +11,19 @@ export interface Avance {
     fechaDate:Date;
     url:string;
     id:number;
+    numPapeleta:string;
+    numNotificacion:string;
+    numCompromisoPago:string;
+    estadoVisita:string;
+    titular:string;
+    direccion:string;
+    provincia:string
+    distrito:string;
+    desSituacionConaguaTMomentoVisita:string;
+    numMesesDeudaMomentoVisita:number;
+    montoDeudaMomentoVisita:number;
+    saldoCtaCteMomentoVisita:number;
+    idEstadoVisita:any;
+    idActividad:any;
 
   }

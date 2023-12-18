@@ -34,18 +34,21 @@ export class Tab4Page implements OnInit {
   mes?: string;
   suministro?: any;
   nombre?: any = '';
+  saldoCC?:any='';
+  montoDeuda?:any='';
+  numMesesDeuda?:any='';
   direccion?: any;
   latitud?: any;
   longitud?: any;
   observacion: string = '';
-  sgrabar?= false;
+  sgrabar? = false;
   idUs?: any;
   listaActividades: Actividades[] = [];
   listaEstadosVisita: EstadosVisita[] = [];
   lectura: number = 0;
   numNotificacion: any;
   numCompromiso: any;
-  numPapeleta:any;
+  numPapeleta: any;
   ultimaLectura: any;
   selectedActividad: any;
   selectedEstadoVisita: any;
@@ -132,23 +135,23 @@ export class Tab4Page implements OnInit {
       this.listaEstadosVisita = JSON.parse(estadoVisita);
       // Hacer algo con los datos almacenados en el array 'impedimentosArray'
     }
-    
+
   }
-  
+
 
   countdown: string = '';
   startCountdown() {
     let timeLeft = environment.TIMESESION; // Tiempo en segundos
     clearInterval(this.countdownInterval); // Borra el intervalo previo, si existe
-  
+
     this.countdownInterval = setInterval(() => {
       const minutes = Math.floor(timeLeft / 60);
       const seconds = timeLeft % 60;
       this.countdown = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
       timeLeft--;
-  
+
       //console.log(this.countdown);
-  
+
       if (timeLeft < 0) {
         clearInterval(this.countdownInterval);
         // Realiza la acción deseada al finalizar el contador
@@ -156,7 +159,7 @@ export class Tab4Page implements OnInit {
       }
     }, 1000);
   }
-  
+
   // Método que puedes llamar para restablecer el contador desde otros métodos
   resetCountdown() {
     clearInterval(this.countdownInterval); // Borra el intervalo actual
@@ -265,7 +268,7 @@ export class Tab4Page implements OnInit {
 
         } else if (error) {
           console.error('Error al obtener las coordenadas GPS:', error);
-         // this.utils.mostrarToast('Error al obtener las coordenadas GPS ', 5000, 'danger');
+          // this.utils.mostrarToast('Error al obtener las coordenadas GPS ', 5000, 'danger');
         }
       });
     } catch (error) {
@@ -278,14 +281,41 @@ export class Tab4Page implements OnInit {
   async guardarActividad() {
     this.resetCountdown();// restablece contador para cerrar sesion
 
-    if (this.isPhotoGallery) {
-      console.log('entro a fotos de galeria');
-      console.log(this.filesFotosGalery);
-      this.guardar(this.filesFotosGalery);
-    } else {
-      console.log('entro a fotos de camara');
-      this.guardar(this.filesFotosCamara);
-    }
+    // Mostrar un cuadro de diálogo de confirmación
+    const confirmAlert = await this.alertController.create({
+      header: '¿Está seguro de guardar?',
+      //  message: '¿Desea exportar el archivo Excel?',
+
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            console.log('Exportación cancelada');
+          },
+        },
+        {
+          text: 'Guardar',
+          handler: async (data) => {
+            if (this.isPhotoGallery) {
+              console.log('entro a fotos de galeria');
+              console.log(this.filesFotosGalery);
+              this.guardar(this.filesFotosGalery);
+            } else {
+              console.log('entro a fotos de camara');
+              this.guardar(this.filesFotosCamara);
+            }
+
+          },
+        },
+      ],
+    });
+
+    await confirmAlert.present();
+    /////////////////////////////////////////////7
+
+
+
 
   }
 
@@ -294,7 +324,7 @@ export class Tab4Page implements OnInit {
     console.log(fotos.length);
     var numNot = '';
     var numComp = '';
-    var numPape='';
+    var numPape = '';
     if (this.numNotificacion) {
       numNot = this.numNotificacion
     }
@@ -314,8 +344,8 @@ export class Tab4Page implements OnInit {
         if (this.selectedEstadoVisita) {
           if (true) { // this.base64[0] aca permito que sea opcional la foto
             //this.utils.loader(); // carga el loader de espera 
-             // Mostrar el indicador de carga
-             const loading = await this.loading.create({
+            // Mostrar el indicador de carga
+            const loading = await this.loading.create({
               message: 'Espere un momento...', // Mensaje que se mostrará mientras carga
             });
             await loading.present();
@@ -337,30 +367,16 @@ export class Tab4Page implements OnInit {
             formData.append('flagUsoQr', this.flagQR.toString());
             formData.append('observacion', this.observacion);
 
-            if (fotos.length > 0 && fotos.length < 2) {
-              formData.append('foto1', fotos[0]);
-              const file = new File([''], '', { type: 'text/plain' });
-              formData.append('foto2', file);
-              formData.append('foto3', file);
-            } else if (fotos.length > 1 && fotos.length < 3) {
-              formData.append('foto1', fotos[0]);
-              formData.append('foto2', fotos[1]);
-              const file = new File([''], '', { type: 'text/plain' });
-              formData.append('foto3', file);
-            } else if (fotos.length > 2 && fotos.length < 4) {
-              formData.append('foto1', fotos[0]);
-              formData.append('foto2', fotos[1]);
-              formData.append('foto3', fotos[2]);
-            } else if (fotos.length == 0) {
-              const file = new File([''], '', { type: 'text/plain' });
-              formData.append('foto1', file);
-              formData.append('foto2', file);
-              formData.append('foto3', file);
+            const maxFotos = 5; // Máximo de fotos a considerar
 
-            } else if (fotos.length > 3) {
-              formData.append('foto1', fotos[0]);
-              formData.append('foto2', fotos[1]);
-              formData.append('foto3', fotos[2]);
+            // Llenar el FormData con archivos de fotos
+            for (let i = 0; i < maxFotos; i++) {
+              if (fotos.length > i) {
+                formData.append(`foto${i + 1}`, fotos[i]);
+              } else {
+                const file = new File([''], '', { type: 'text/plain' });
+                formData.append(`foto${i + 1}`, file);
+              }
             }
 
 
@@ -395,8 +411,8 @@ export class Tab4Page implements OnInit {
                   }
                 },
                 error: (error) => {
-                 // this.utils.closeLoader();
-                 loading.dismiss();
+                  // this.utils.closeLoader();
+                  loading.dismiss();
                   console.error(error);
                   //this.utils.mostrarToast(JSON.stringify(error), 5000, 'danger');
                 }
@@ -444,10 +460,10 @@ export class Tab4Page implements OnInit {
     this.images = [];
     this.filesFotosGalery = [];
     this.isPhotoGallery = false;
-    this.numCompromiso='',
-    this.numNotificacion='',
-    this.numPapeleta=''
-
+    this.numCompromiso = '',
+      this.numNotificacion = '',
+      this.numPapeleta = ''
+    this.index=0;
   }
 
 
@@ -471,24 +487,31 @@ export class Tab4Page implements OnInit {
     this.periodoInput = this.mes + "/" + this.anio;
   }
 
-
+  index:any=0;
   public convertPhotosToFiles(): Promise<File[]> {
-    const photoPromises = this.photoService.photos.map(photo => {
+    const photoPromises = this.photoService.photos.map((photo, index) => {
       if (photo.webviewPath) {
+        const currentIndex = index+1
         return fetch(photo.webviewPath)
           .then(response => response.blob())
           .then(blob => {
-            const filename = this.getFilenameFromPath(photo.webviewPath) + '.jpg';
+           
+            const filename = `img_${currentIndex}`;
             return new File([blob], filename);
           });
       } else {
         return Promise.reject('webviewPath is undefined');
       }
     });
-
+    if(this.photoService.photos.length>5){
+      this.utils.presentAlertPersonalizadoDanger('','Solo se guardaran las 5 primeras fotos');
+    }
     return Promise.all(photoPromises);
   }
 
+  
+
+ 
   public getPhotosArray(): UserPhoto[] {
     return this.photoService.photos;
   }
@@ -555,10 +578,13 @@ export class Tab4Page implements OnInit {
             const jsonData = JSON.parse(response.data);
             console.log(jsonData);
             this.nombre = jsonData.nombreCliente;
+            this.saldoCC = jsonData.saldoCtaCte;
+            this.montoDeuda = jsonData.montoDeuda;
+            this.numMesesDeuda= jsonData.numMesesDeuda;
             this.direccion = jsonData.direccionPredio;
-            this.codCatastral = jsonData.codigoCatastral;
-            this.provincia = jsonData.desProvincia;
-            this.distrito = jsonData.desDistrito;
+            //this.codCatastral = jsonData.codigoCatastral;
+            this.provincia = jsonData.desProvincia +' - '+ jsonData.desDistrito ;
+            //this.distrito = jsonData.desDistrito;
             this.ultimaLectura = jsonData.valorUltimaLectura;
             this.fechaUltimaLectura = jsonData.fechaUltimaLectura;
             this.categoria = jsonData.desCategoria;
@@ -677,8 +703,10 @@ export class Tab4Page implements OnInit {
       this.filesFotosGalery = [];
 
       // Recorrer la lista images para crear nuevos elementos File
+      var cont =0;
       this.images.forEach(base64 => {
-        const file = this.convertBase64ToFile(base64);
+        cont++;
+        const file = this.convertBase64ToFile(base64,cont);
         this.filesFotosGalery.push(file);
         console.log(this.filesFotosGalery);
       });
@@ -686,6 +714,9 @@ export class Tab4Page implements OnInit {
 
     });
 
+    if(this.filesFotosGalery.length>5){
+      this.utils.presentAlertPersonalizadoDanger('','Solo se cargaran las 5 primeras fotos');
+    }
 
     if (this.images.length > 0) {
       this.isPhotoGallery = true;
@@ -694,32 +725,40 @@ export class Tab4Page implements OnInit {
     }
   }
 
-  convertBase64ToFile = (base64: string) => {
-
-    // Extracta sólo la parte base64 sin cabecera data:image/jpeg;base64,
+  convertBase64ToFile = (base64: string , index:any) => {
+    // Extracta solo la parte base64 sin cabecera data:image/jpeg;base64,
     const withoutHeader = base64.split(',')[1];
-
+  
     // Convierte a bytes
     const byteString = atob(withoutHeader);
-
+  
     // Crear array de bytes
     const arrayBuffer = new ArrayBuffer(byteString.length);
     const int8Array = new Uint8Array(arrayBuffer);
-
+  
     for (let i = 0; i < byteString.length; i++) {
       int8Array[i] = byteString.charCodeAt(i);
     }
-
-    // Crear File
+  
+    // Crear Blob
     const blob = new Blob([int8Array], { type: 'image/jpeg' });
-    const file = new File([blob], new Date().getTime() + 'image', { type: 'image/jpeg' });
-
+  
+    // Verificar si el nombre del archivo tiene extensión
+    let fileName ='img'+'_'+index;
+    if (!fileName.endsWith('.jpg')) {
+      fileName += '.jpg';
+    }
+  
+    // Crear File con la extensión .jpg si no la tiene
+    const file = new File([blob], fileName, { type: 'image/jpeg' });
+  
     return file;
-
   }
+  
 
   eliminarFoto(index: any) {
     this.resetCountdown();
+  this.index--;
     console.log(index);
     if (index >= 0 && index < this.images.length) {
       this.images.splice(index, 1);
@@ -731,10 +770,11 @@ export class Tab4Page implements OnInit {
     }
 
     this.filesFotosGalery = [];
-
+    var cont =0;
     // Recorrer la lista images para crear nuevos elementos File
     this.images.forEach(base64 => {
-      const file = this.convertBase64ToFile(base64);
+      cont++;
+      const file = this.convertBase64ToFile(base64,cont);
       this.filesFotosGalery.push(file);
       console.log(this.filesFotosCamara);
 

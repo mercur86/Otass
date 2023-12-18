@@ -31,8 +31,10 @@
   float: right;
 }
 
-ion-modal {
-  --height: 50%;
-  --border-radius: 16px;
+.modalFiltro{
+  --height: 57%;
+  --width: 80%;
+  --border-radius: 5px;
   --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
+
