@@ -496,7 +496,7 @@ export class Tab4Page implements OnInit {
           .then(response => response.blob())
           .then(blob => {
            
-            const filename = `img_${currentIndex}`;
+            const filename = `img_${currentIndex}.jpg`;
             return new File([blob], filename);
           });
       } else {
